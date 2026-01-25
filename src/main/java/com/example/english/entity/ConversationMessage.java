@@ -1,5 +1,6 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ public class ConversationMessage {
     @Column(name = "message_id")
     private String messageId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "conversation_id", nullable = false)
     private Conversation conversation;
@@ -108,5 +110,3 @@ public class ConversationMessage {
         this.sentAt = sentAt;
     }
 }
-
-

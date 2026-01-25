@@ -25,7 +25,7 @@ export default function Conversations() {
 
   const fetchConversations = async () => {
     if (!user?.userId) return
-    
+
     try {
       const response = await axios.get(`/conversations/users/${user.userId}`)
       setConversations(response.data)
@@ -39,10 +39,10 @@ export default function Conversations() {
   const handleStartConversation = async (e) => {
     e.preventDefault()
     if (!user?.userId) return
-    
+
     try {
       const response = await axios.post(`/conversations/users/${user.userId}/start`, newConversation)
-      navigate(`/conversations/${response.data.conversationId}`)
+      navigate(`/dashboard/conversations/${response.data.conversationId}`)
     } catch (error) {
       console.error('Error starting conversation:', error)
       alert('Error starting conversation. Please try again.')
@@ -76,7 +76,7 @@ export default function Conversations() {
             <input
               type="text"
               value={newConversation.topic}
-              onChange={(e) => setNewConversation({...newConversation, topic: e.target.value})}
+              onChange={(e) => setNewConversation({ ...newConversation, topic: e.target.value })}
               className="w-full px-4 py-2 border rounded-lg"
               placeholder="e.g., Daily activities, Travel, Food..."
               required
@@ -86,7 +86,7 @@ export default function Conversations() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
             <select
               value={newConversation.difficultyLevel}
-              onChange={(e) => setNewConversation({...newConversation, difficultyLevel: e.target.value})}
+              onChange={(e) => setNewConversation({ ...newConversation, difficultyLevel: e.target.value })}
               className="w-full px-4 py-2 border rounded-lg"
             >
               <option value="BEGINNER">Beginner</option>
@@ -118,16 +118,15 @@ export default function Conversations() {
         {conversations.map((conversation) => (
           <Link
             key={conversation.conversationId}
-            to={`/conversations/${conversation.conversationId}`}
+            to={`/dashboard/conversations/${conversation.conversationId}`}
             className="card hover:shadow-lg transition-shadow"
           >
             <div className="flex items-start justify-between mb-3">
               <MessageCircle className="w-6 h-6 text-primary-600" />
-              <span className={`px-2 py-1 text-xs font-medium rounded ${
-                conversation.status === 'ACTIVE' 
-                  ? 'bg-green-100 text-green-800' 
+              <span className={`px-2 py-1 text-xs font-medium rounded ${conversation.status === 'ACTIVE'
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-gray-100 text-gray-800'
-              }`}>
+                }`}>
                 {conversation.status}
               </span>
             </div>

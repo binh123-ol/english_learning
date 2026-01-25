@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Map;
 import java.util.UUID;
 
@@ -52,16 +52,41 @@ public class ConversationService {
         conversation.setStartedAt(LocalDateTime.now());
         conversation.setCreatedAt(LocalDateTime.now());
 
-        return conversationRepository.save(conversation);
+        Conversation savedConversation = conversationRepository.save(conversation);
+
+        // Add initial AI greeting
+        String greeting = "Hello " + user.getUsername() + ", how can I help you to improve your speaking skill today?";
+        ConversationMessage aiMsg = new ConversationMessage();
+        aiMsg.setMessageId(UUID.randomUUID().toString());
+        aiMsg.setConversation(savedConversation);
+        aiMsg.setSenderType("AI");
+        aiMsg.setContent(greeting);
+        aiMsg.setSentAt(LocalDateTime.now());
+
+        // Add translation for greeting
+        String translation = aiService.translateText(greeting);
+        aiMsg.setFeedback("TRANSLATION:" + translation);
+
+        messageRepository.save(aiMsg);
+
+        savedConversation.setMessagesCount(1);
+        return conversationRepository.save(savedConversation);
     }
 
     @Transactional
-    public ConversationMessage sendMessage(String conversationId, String userMessage, String audioFileUrl) {
+    public ConversationMessage sendMessage(String conversationId, String userMessage, String audioFileUrl,
+            List<AIService.WordDetail> frontendDetails) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Conversation", "id", conversationId));
 
         if (!"ACTIVE".equals(conversation.getStatus())) {
             throw new BadRequestException("Conversation is not active");
+        }
+
+        // Check message limit (10-15 sentences, let's say 15 messages)
+        if (conversation.getMessagesCount() >= 15) {
+            throw new BadRequestException(
+                    "Conversation limit reached (15 messages). Please end the session to see your report.");
         }
 
         // Save user message
@@ -76,25 +101,44 @@ public class ConversationService {
         if (audioFileUrl != null && !audioFileUrl.isEmpty()) {
             AIService.PronunciationAnalysis analysis = aiService.analyzePronunciation(userMessage, audioFileUrl);
             userMsg.setPronunciationScore(analysis.getScore());
+
+            // Store word-level details as JSON string in feedback
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                String detailsJson = mapper.writeValueAsString(analysis.getDetails());
+                userMsg.setFeedback(detailsJson);
+            } catch (Exception e) {
+                userMsg.setFeedback("");
+            }
+        } else if (frontendDetails != null && !frontendDetails.isEmpty()) {
+            // If no audio but frontend provided details (STT with confidence)
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                String detailsJson = mapper.writeValueAsString(frontendDetails);
+                userMsg.setFeedback(detailsJson);
+
+                // Calculate a simple score from frontend details
+                long correctCount = frontendDetails.stream().filter(d -> "correct".equals(d.getStatus())).count();
+                double score = (double) correctCount / frontendDetails.size();
+                userMsg.setPronunciationScore(BigDecimal.valueOf(score).setScale(2, java.math.RoundingMode.HALF_UP));
+            } catch (Exception e) {
+                userMsg.setFeedback("");
+            }
         }
 
         List<Map<String, String>> grammarErrors = aiService.checkGrammar(userMessage);
         List<Map<String, String>> spellingErrors = aiService.checkSpelling(userMessage);
 
         if (!grammarErrors.isEmpty()) {
-            userMsg.setGrammarErrors(grammarErrors.toString()); // In production, use JSON serializer
+            userMsg.setGrammarErrors(grammarErrors.toString());
         }
         if (!spellingErrors.isEmpty()) {
-            userMsg.setSpellingErrors(spellingErrors.toString()); // In production, use JSON serializer
+            userMsg.setSpellingErrors(spellingErrors.toString());
         }
-
-        // Generate feedback
-        String feedback = generateFeedback(grammarErrors, spellingErrors, userMsg.getPronunciationScore());
-        userMsg.setFeedback(feedback);
 
         messageRepository.save(userMsg);
 
-        // Generate AI response
+        // Generate AI response using Gemini
         String aiResponse = aiService.generateAIResponse(userMessage, conversation.getTopic());
         ConversationMessage aiMsg = new ConversationMessage();
         aiMsg.setMessageId(UUID.randomUUID().toString());
@@ -102,6 +146,13 @@ public class ConversationService {
         aiMsg.setSenderType("AI");
         aiMsg.setContent(aiResponse);
         aiMsg.setSentAt(LocalDateTime.now());
+
+        // Optionally pre-translate AI response
+        String translation = aiService.translateText(aiResponse);
+        // We'll store it in a way the frontend can access (e.g., appended or in a
+        // specific format)
+        // For now, let's add it to the feedback field for AI messages
+        aiMsg.setFeedback("TRANSLATION:" + translation);
 
         messageRepository.save(aiMsg);
 

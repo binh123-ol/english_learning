@@ -30,8 +30,7 @@ public class ConversationController {
         Conversation conversation = conversationService.startConversation(
                 userId,
                 request.getTopic(),
-                request.getDifficultyLevel()
-        );
+                request.getDifficultyLevel());
         return new ResponseEntity<>(conversation, HttpStatus.CREATED);
     }
 
@@ -43,8 +42,8 @@ public class ConversationController {
         ConversationMessage message = conversationService.sendMessage(
                 conversationId,
                 request.getMessage(),
-                request.getAudioFileUrl()
-        );
+                request.getAudioFileUrl(),
+                request.getPronunciationDetails());
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
@@ -71,21 +70,51 @@ public class ConversationController {
         private String topic;
         private String difficultyLevel;
 
-        public String getTopic() { return topic; }
-        public void setTopic(String topic) { this.topic = topic; }
-        public String getDifficultyLevel() { return difficultyLevel; }
-        public void setDifficultyLevel(String difficultyLevel) { this.difficultyLevel = difficultyLevel; }
+        public String getTopic() {
+            return topic;
+        }
+
+        public void setTopic(String topic) {
+            this.topic = topic;
+        }
+
+        public String getDifficultyLevel() {
+            return difficultyLevel;
+        }
+
+        public void setDifficultyLevel(String difficultyLevel) {
+            this.difficultyLevel = difficultyLevel;
+        }
     }
 
     public static class MessageRequest {
         private String message;
         private String audioFileUrl;
+        private List<com.example.english.service.AIService.WordDetail> pronunciationDetails;
 
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-        public String getAudioFileUrl() { return audioFileUrl; }
-        public void setAudioFileUrl(String audioFileUrl) { this.audioFileUrl = audioFileUrl; }
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public String getAudioFileUrl() {
+            return audioFileUrl;
+        }
+
+        public void setAudioFileUrl(String audioFileUrl) {
+            this.audioFileUrl = audioFileUrl;
+        }
+
+        public List<com.example.english.service.AIService.WordDetail> getPronunciationDetails() {
+            return pronunciationDetails;
+        }
+
+        public void setPronunciationDetails(
+                List<com.example.english.service.AIService.WordDetail> pronunciationDetails) {
+            this.pronunciationDetails = pronunciationDetails;
+        }
     }
 }
-
-
