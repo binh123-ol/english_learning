@@ -530,3 +530,21 @@ CREATE TABLE IF NOT EXISTS learning_statistics (
     INDEX idx_user_id (user_id),
     INDEX idx_stat_date (stat_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ============================================
+-- 17. USER_RECORDINGS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS user_recordings (
+    recording_id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    audio_data LONGBLOB NOT NULL,        -- Actual audio content
+    content_type VARCHAR(100) NOT NULL,  -- MIME type (e.g., audio/webm)
+    recording_type VARCHAR(50) NOT NULL, -- ASSESSMENT, SPEAKING_TEST, CONVERSATION
+    reference_id VARCHAR(36) NOT NULL,    -- answer_id or message_id
+    transcription TEXT,
+    pronunciation_score DECIMAL(3,2),
+    created_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_recording_type (recording_type),
+    INDEX idx_reference_id (reference_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
