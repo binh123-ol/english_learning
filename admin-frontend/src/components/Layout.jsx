@@ -37,9 +37,9 @@ export default function Layout() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex relative">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg">
+      <aside className="w-64 bg-white shadow-lg fixed h-screen z-10 flex flex-col">
         <div className="p-6 border-b">
           <div className="flex items-center space-x-3">
             <Shield className="w-8 h-8 text-primary-600" />
@@ -50,7 +50,7 @@ export default function Layout() {
           </div>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon
             return (
@@ -70,7 +70,7 @@ export default function Layout() {
           })}
         </nav>
 
-        <div className="absolute bottom-0 w-64 p-4 border-t bg-white">
+        <div className="w-64 p-4 border-t bg-white mt-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
@@ -95,7 +95,7 @@ export default function Layout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 ml-64 overflow-auto min-h-screen">
         <div className="p-8">
           <Outlet />
         </div>

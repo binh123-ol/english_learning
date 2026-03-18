@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class LevelAssessmentDTO {
     private String assessmentId;
-    private String userId;
+    private UserSummaryDTO user;
     private BigDecimal listeningScore;
     private BigDecimal readingScore;
     private BigDecimal writingScore;
@@ -21,20 +21,19 @@ public class LevelAssessmentDTO {
     public LevelAssessmentDTO() {}
 
     // Getters and Setters
+    public UserSummaryDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserSummaryDTO user) {
+        this.user = user;
+    }
     public String getAssessmentId() {
         return assessmentId;
     }
 
     public void setAssessmentId(String assessmentId) {
         this.assessmentId = assessmentId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public BigDecimal getListeningScore() {

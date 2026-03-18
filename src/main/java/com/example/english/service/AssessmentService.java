@@ -414,7 +414,10 @@ public class AssessmentService {
     private LevelAssessmentDTO convertToDTO(LevelAssessment assessment) {
         LevelAssessmentDTO dto = new LevelAssessmentDTO();
         dto.setAssessmentId(assessment.getAssessmentId());
-        dto.setUserId(assessment.getUser() != null ? assessment.getUser().getUserId() : null);
+        if (assessment.getUser() != null) {
+            User user = assessment.getUser();
+            dto.setUser(new UserSummaryDTO(user.getUserId(), user.getUsername(), user.getEmail()));
+        }
         dto.setListeningScore(assessment.getListeningScore());
         dto.setReadingScore(assessment.getReadingScore());
         dto.setWritingScore(assessment.getWritingScore());

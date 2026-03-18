@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class AIService {
 
     private final String geminiApiKey;
     private final String geminiApiUrl;
+
+    @Autowired
+    private com.example.english.repository.UserRecordingRepository recordingRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -94,32 +98,43 @@ public class AIService {
         }
 
         try {
-            Path audioPath = resolveAudioPath(audioFileUrl);
-            if (!Files.exists(audioPath)) {
-                BigDecimal mockScore = mockPronunciationScore(expectedText);
-                return new PronunciationAnalysis(
-                        mockScore,
-                        expectedText,
-                        "",
-                        Collections.emptyList());
+            String recognizedText = "";
+
+            // Kiểm tra xem audioFileUrl có phải là URL lấy từ DB không
+            if (audioFileUrl.contains("/api/files/recordings/")) {
+                String recordingId = audioFileUrl.substring(audioFileUrl.lastIndexOf('/') + 1);
+                Optional<com.example.english.entity.UserRecording> recordingOpt = recordingRepository.findById(recordingId);
+                if (recordingOpt.isPresent()) {
+                    recognizedText = recognizeTextFromAudioData(recordingOpt.get().getAudioData());
+                } else {
+                    return fallbackToMock(expectedText);
+                }
+            } else {
+                Path audioPath = resolveAudioPath(audioFileUrl);
+                if (audioPath == null || !Files.exists(audioPath)) {
+                    return fallbackToMock(expectedText);
+                }
+                recognizedText = recognizeTextFromAudio(audioPath);
             }
 
-            String recognizedText = recognizeTextFromAudio(audioPath);
             if (recognizedText == null) {
                 recognizedText = "";
             }
 
-            PronunciationAnalysis analysis = compareTexts(expectedText, recognizedText);
-            return analysis;
+            return compareTexts(expectedText, recognizedText);
         } catch (Exception e) {
             System.err.println("Error during Vosk pronunciation analysis: " + e.getMessage());
-            BigDecimal mockScore = mockPronunciationScore(expectedText);
-            return new PronunciationAnalysis(
-                    mockScore,
-                    expectedText,
-                    "",
-                    Collections.emptyList());
+            return fallbackToMock(expectedText);
         }
+    }
+
+    private PronunciationAnalysis fallbackToMock(String expectedText) {
+        BigDecimal mockScore = mockPronunciationScore(expectedText);
+        return new PronunciationAnalysis(
+                mockScore,
+                expectedText,
+                "",
+                Collections.emptyList());
     }
 
     /**
@@ -134,11 +149,46 @@ public class AIService {
     private Path resolveAudioPath(String audioFileUrl) {
         // audioFileUrl thường có dạng /api/files/audio/{filename} hoặc chỉ là filename
         String pathPart = audioFileUrl.trim();
+        
+        // Nếu là URL của DB recording, thì skip resolving thành path vì ta sẽ handle ở analyzePronunciation
+        if (pathPart.contains("/api/files/recordings/")) {
+            return null;
+        }
+
         int lastSlash = pathPart.lastIndexOf('/');
         if (lastSlash >= 0) {
             pathPart = pathPart.substring(lastSlash + 1);
         }
         return Paths.get(uploadDir).resolve(pathPart).normalize();
+    }
+
+    /**
+     * Dùng Vosk để nhận dạng text từ byte array audio.
+     */
+    private String recognizeTextFromAudioData(byte[] audioData) throws Exception {
+        if (voskModel == null || audioData == null || audioData.length == 0) {
+            return "";
+        }
+
+        try (Recognizer recognizer = new Recognizer(voskModel, 16000);
+                java.io.ByteArrayInputStream is = new java.io.ByteArrayInputStream(audioData)) {
+
+            byte[] buffer = new byte[4096];
+            int nread;
+            while ((nread = is.read(buffer)) >= 0) {
+                if (recognizer.acceptWaveForm(buffer, nread)) {
+                }
+            }
+
+            String resultJson = recognizer.getFinalResult();
+            if (resultJson == null || resultJson.isEmpty()) {
+                return "";
+            }
+
+            JsonNode node = objectMapper.readTree(resultJson);
+            JsonNode textNode = node.get("text");
+            return textNode != null ? textNode.asText() : "";
+        }
     }
 
     /**

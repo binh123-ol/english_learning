@@ -463,246 +463,250 @@ export default function AssessmentManagement() {
           </div>
 
           {showQuestionForm && (
-            <div className="card">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                {editingQuestion ? 'Edit Question' : 'Create New Question'}
-              </h2>
-              <form onSubmit={handleCreateQuestion} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Skill Type *</label>
-                    <select
-                      value={questionFormData.skillType}
-                      onChange={(e) => handleSkillTypeChange(e.target.value)}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                    >
-                      <option value="LISTENING">🎧 Listening (Nghe và chọn đáp án)</option>
-                      <option value="READING">📖 Reading (Đọc đoạn văn và chọn đáp án)</option>
-                      <option value="WRITING">✍️ Writing (Điền đáp án)</option>
-                      <option value="SPEAKING">🎤 Speaking (Ghi âm hoặc upload audio)</option>
-                      <option value="GRAMMAR">📝 Grammar (Chọn đáp án ngữ pháp)</option>
-                      <option value="VOCABULARY">📚 Vocabulary (Chọn đáp án từ vựng)</option>
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {questionFormData.skillType === 'LISTENING' && 'Cần upload audio file để người dùng nghe'}
-                      {questionFormData.skillType === 'READING' && 'Cần nhập đoạn văn để người dùng đọc'}
-                      {questionFormData.skillType === 'WRITING' && 'Người dùng sẽ điền đáp án dạng text'}
-                      {questionFormData.skillType === 'SPEAKING' && 'Người dùng sẽ ghi âm hoặc upload audio, AI sẽ chấm điểm'}
-                      {questionFormData.skillType === 'GRAMMAR' && 'Câu hỏi trắc nghiệm về ngữ pháp'}
-                      {questionFormData.skillType === 'VOCABULARY' && 'Câu hỏi trắc nghiệm về từ vựng'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Question Type *</label>
-                    <select
-                      value={questionFormData.questionType}
-                      onChange={(e) => {
-                        const newType = e.target.value
-                        setQuestionFormData({
-                          ...questionFormData,
-                          questionType: newType,
-                          options: newType === 'MULTIPLE_CHOICE' 
-                            ? [{ optionText: '', isCorrect: false, orderIndex: 1 }]
-                            : []
-                        })
-                      }}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      required
-                      disabled={['WRITING', 'SPEAKING'].includes(questionFormData.skillType)}
-                    >
-                      <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-                      <option value="TEXT_INPUT">Text Input</option>
-                      <option value="TRUE_FALSE">True/False</option>
-                      <option value="FILL_BLANK">Fill in the Blank</option>
-                    </select>
-                    {['WRITING', 'SPEAKING'].includes(questionFormData.skillType) && (
-                      <p className="text-xs text-gray-500 mt-1">Tự động set thành Text Input cho {questionFormData.skillType}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
-                    <select
-                      value={questionFormData.difficultyLevel}
-                      onChange={(e) => setQuestionFormData({...questionFormData, difficultyLevel: e.target.value})}
-                      className="w-full px-4 py-2 border rounded-lg"
-                    >
-                      <option value="BEGINNER">Beginner</option>
-                      <option value="ELEMENTARY">Elementary</option>
-                      <option value="INTERMEDIATE">Intermediate</option>
-                      <option value="UPPER_INTERMEDIATE">Upper Intermediate</option>
-                      <option value="ADVANCED">Advanced</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Score Points</label>
-                    <input
-                      type="number"
-                      value={questionFormData.scorePoints}
-                      onChange={(e) => setQuestionFormData({...questionFormData, scorePoints: parseFloat(e.target.value)})}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      min="0"
-                      step="0.1"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Order Index</label>
-                    <input
-                      type="number"
-                      value={questionFormData.orderIndex}
-                      onChange={(e) => setQuestionFormData({...questionFormData, orderIndex: parseInt(e.target.value)})}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      min="1"
-                    />
-                  </div>
-                </div>
-                {/* Reading Passage for READING questions */}
-                {questionFormData.skillType === 'READING' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Reading Passage (Đoạn văn) *
-                    </label>
-                    <textarea
-                      value={questionFormData.readingPassage}
-                      onChange={(e) => setQuestionFormData({...questionFormData, readingPassage: e.target.value})}
-                      className="w-full px-4 py-2 border rounded-lg"
-                      rows="6"
-                      placeholder="Nhập đoạn văn để người dùng đọc..."
-                      required
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Đoạn văn này sẽ hiển thị trước câu hỏi</p>
-                  </div>
-                )}
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {questionFormData.skillType === 'READING' ? 'Question Text (Câu hỏi về đoạn văn) *' : 'Question Text *'}
-                  </label>
-                  <textarea
-                    value={questionFormData.textContent}
-                    onChange={(e) => setQuestionFormData({...questionFormData, textContent: e.target.value})}
-                    className="w-full px-4 py-2 border rounded-lg"
-                    rows="3"
-                    placeholder={
-                      questionFormData.skillType === 'LISTENING' ? 'Ví dụ: What time does the meeting start?'
-                      : questionFormData.skillType === 'READING' ? 'Ví dụ: What is the main idea of the passage?'
-                      : questionFormData.skillType === 'WRITING' ? 'Ví dụ: Write a paragraph about your favorite hobby'
-                      : questionFormData.skillType === 'SPEAKING' ? 'Ví dụ: Describe your hometown in 2 minutes'
-                      : questionFormData.skillType === 'GRAMMAR' ? 'Ví dụ: Choose the correct form of the verb'
-                      : 'Ví dụ: What does this word mean?'
-                    }
-                    required
-                  />
-                </div>
-                {questionFormData.skillType === 'LISTENING' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Audio File (for LISTENING questions)
-                    </label>
-                    <div className="flex items-center space-x-3">
-                      <label className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer">
-                        <Upload className="w-4 h-4" />
-                        <span>{uploadingAudio ? 'Uploading...' : 'Upload Audio'}</span>
-                        <input
-                          type="file"
-                          accept="audio/*"
-                          onChange={handleAudioUpload}
-                          className="hidden"
-                          disabled={uploadingAudio}
-                        />
-                      </label>
-                      {questionFormData.audioFileUrl && (
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm text-green-600">✓ Audio uploaded</span>
-                          <audio controls src={questionFormData.audioFileUrl} className="h-8" />
-                        </div>
-                      )}
-                    </div>
-                    {questionFormData.audioFileUrl && (
-                      <input
-                        type="text"
-                        value={questionFormData.audioFileUrl}
-                        onChange={(e) => setQuestionFormData({...questionFormData, audioFileUrl: e.target.value})}
-                        className="w-full mt-2 px-4 py-2 border rounded-lg text-sm"
-                        placeholder="Or enter audio URL directly"
-                      />
-                    )}
-                  </div>
-                )}
-                {questionFormData.questionType !== 'MULTIPLE_CHOICE' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
-                    <input
-                      type="text"
-                      value={questionFormData.correctAnswerText}
-                      onChange={(e) => setQuestionFormData({...questionFormData, correctAnswerText: e.target.value})}
-                      className="w-full px-4 py-2 border rounded-lg"
-                    />
-                  </div>
-                )}
-                {questionFormData.questionType === 'MULTIPLE_CHOICE' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Options *</label>
-                    {questionFormData.options.map((option, index) => (
-                      <div key={index} className="flex items-center space-x-2 mb-2">
-                        <input
-                          type="text"
-                          value={option.optionText}
-                          onChange={(e) => updateOption(index, 'optionText', e.target.value)}
-                          placeholder={`Option ${index + 1}`}
-                          className="flex-1 px-4 py-2 border rounded-lg"
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-y-auto">
+              <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">
+                    {editingQuestion ? 'Edit Question' : 'Create New Question'}
+                  </h2>
+                  <form onSubmit={handleCreateQuestion} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Skill Type *</label>
+                        <select
+                          value={questionFormData.skillType}
+                          onChange={(e) => handleSkillTypeChange(e.target.value)}
+                          className="w-full px-4 py-2 border rounded-lg"
                           required
-                        />
-                        <label className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            checked={option.isCorrect}
-                            onChange={(e) => updateOption(index, 'isCorrect', e.target.checked)}
-                            className="rounded"
-                          />
-                          <span className="text-sm text-gray-700">Correct</span>
-                        </label>
-                        {questionFormData.options.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeOption(index)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                        >
+                          <option value="LISTENING">🎧 Listening (Nghe và chọn đáp án)</option>
+                          <option value="READING">📖 Reading (Đọc đoạn văn và chọn đáp án)</option>
+                          <option value="WRITING">✍️ Writing (Điền đáp án)</option>
+                          <option value="SPEAKING">🎤 Speaking (Ghi âm hoặc upload audio)</option>
+                          <option value="GRAMMAR">📝 Grammar (Chọn đáp án ngữ pháp)</option>
+                          <option value="VOCABULARY">📚 Vocabulary (Chọn đáp án từ vựng)</option>
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {questionFormData.skillType === 'LISTENING' && 'Cần upload audio file để người dùng nghe'}
+                          {questionFormData.skillType === 'READING' && 'Cần nhập đoạn văn để người dùng đọc'}
+                          {questionFormData.skillType === 'WRITING' && 'Người dùng sẽ điền đáp án dạng text'}
+                          {questionFormData.skillType === 'SPEAKING' && 'Người dùng sẽ ghi âm hoặc upload audio, AI sẽ chấm điểm'}
+                          {questionFormData.skillType === 'GRAMMAR' && 'Câu hỏi trắc nghiệm về ngữ pháp'}
+                          {questionFormData.skillType === 'VOCABULARY' && 'Câu hỏi trắc nghiệm về từ vựng'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Question Type *</label>
+                        <select
+                          value={questionFormData.questionType}
+                          onChange={(e) => {
+                            const newType = e.target.value
+                            setQuestionFormData({
+                              ...questionFormData,
+                              questionType: newType,
+                              options: newType === 'MULTIPLE_CHOICE' 
+                                ? [{ optionText: '', isCorrect: false, orderIndex: 1 }]
+                                : []
+                            })
+                          }}
+                          className="w-full px-4 py-2 border rounded-lg"
+                          required
+                          disabled={['WRITING', 'SPEAKING'].includes(questionFormData.skillType)}
+                        >
+                          <option value="MULTIPLE_CHOICE">Multiple Choice</option>
+                          <option value="TEXT_INPUT">Text Input</option>
+                          <option value="TRUE_FALSE">True/False</option>
+                          <option value="FILL_BLANK">Fill in the Blank</option>
+                        </select>
+                        {['WRITING', 'SPEAKING'].includes(questionFormData.skillType) && (
+                          <p className="text-xs text-gray-500 mt-1">Tự động set thành Text Input cho {questionFormData.skillType}</p>
                         )}
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={addOption}
-                      className="mt-2 text-primary-600 hover:text-primary-900 text-sm"
-                    >
-                      + Add Option
-                    </button>
-                  </div>
-                )}
-                <div className="flex space-x-3">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700"
-                  >
-                    {editingQuestion ? 'Update Question' : 'Create Question'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowQuestionForm(false)
-                      setEditingQuestion(null)
-                      resetQuestionForm()
-                    }}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300"
-                  >
-                    Cancel
-                  </button>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
+                        <select
+                          value={questionFormData.difficultyLevel}
+                          onChange={(e) => setQuestionFormData({...questionFormData, difficultyLevel: e.target.value})}
+                          className="w-full px-4 py-2 border rounded-lg"
+                        >
+                          <option value="BEGINNER">Beginner</option>
+                          <option value="ELEMENTARY">Elementary</option>
+                          <option value="INTERMEDIATE">Intermediate</option>
+                          <option value="UPPER_INTERMEDIATE">Upper Intermediate</option>
+                          <option value="ADVANCED">Advanced</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Score Points</label>
+                        <input
+                          type="number"
+                          value={questionFormData.scorePoints}
+                          onChange={(e) => setQuestionFormData({...questionFormData, scorePoints: parseFloat(e.target.value)})}
+                          className="w-full px-4 py-2 border rounded-lg"
+                          min="0"
+                          step="0.1"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Order Index</label>
+                        <input
+                          type="number"
+                          value={questionFormData.orderIndex}
+                          onChange={(e) => setQuestionFormData({...questionFormData, orderIndex: parseInt(e.target.value)})}
+                          className="w-full px-4 py-2 border rounded-lg"
+                          min="1"
+                        />
+                      </div>
+                    </div>
+                    {/* Reading Passage for READING questions */}
+                    {questionFormData.skillType === 'READING' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Reading Passage (Đoạn văn) *
+                        </label>
+                        <textarea
+                          value={questionFormData.readingPassage}
+                          onChange={(e) => setQuestionFormData({...questionFormData, readingPassage: e.target.value})}
+                          className="w-full px-4 py-2 border rounded-lg"
+                          rows="6"
+                          placeholder="Nhập đoạn văn để người dùng đọc..."
+                          required
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Đoạn văn này sẽ hiển thị trước câu hỏi</p>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {questionFormData.skillType === 'READING' ? 'Question Text (Câu hỏi về đoạn văn) *' : 'Question Text *'}
+                      </label>
+                      <textarea
+                        value={questionFormData.textContent}
+                        onChange={(e) => setQuestionFormData({...questionFormData, textContent: e.target.value})}
+                        className="w-full px-4 py-2 border rounded-lg"
+                        rows="3"
+                        placeholder={
+                          questionFormData.skillType === 'LISTENING' ? 'Ví dụ: What time does the meeting start?'
+                          : questionFormData.skillType === 'READING' ? 'Ví dụ: What is the main idea of the passage?'
+                          : questionFormData.skillType === 'WRITING' ? 'Ví dụ: Write a paragraph about your favorite hobby'
+                          : questionFormData.skillType === 'SPEAKING' ? 'Ví dụ: Describe your hometown in 2 minutes'
+                          : questionFormData.skillType === 'GRAMMAR' ? 'Ví dụ: Choose the correct form of the verb'
+                          : 'Ví dụ: What does this word mean?'
+                        }
+                        required
+                      />
+                    </div>
+                    {questionFormData.skillType === 'LISTENING' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Audio File (for LISTENING questions)
+                        </label>
+                        <div className="flex items-center space-x-3">
+                          <label className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer">
+                            <Upload className="w-4 h-4" />
+                            <span>{uploadingAudio ? 'Uploading...' : 'Upload Audio'}</span>
+                            <input
+                              type="file"
+                              accept="audio/*"
+                              onChange={handleAudioUpload}
+                              className="hidden"
+                              disabled={uploadingAudio}
+                            />
+                          </label>
+                          {questionFormData.audioFileUrl && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-green-600">✓ Audio uploaded</span>
+                              <audio controls src={questionFormData.audioFileUrl} className="h-8" />
+                            </div>
+                          )}
+                        </div>
+                        {questionFormData.audioFileUrl && (
+                          <input
+                            type="text"
+                            value={questionFormData.audioFileUrl}
+                            onChange={(e) => setQuestionFormData({...questionFormData, audioFileUrl: e.target.value})}
+                            className="w-full mt-2 px-4 py-2 border rounded-lg text-sm"
+                            placeholder="Or enter audio URL directly"
+                          />
+                        )}
+                      </div>
+                    )}
+                    {questionFormData.questionType !== 'MULTIPLE_CHOICE' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Correct Answer</label>
+                        <input
+                          type="text"
+                          value={questionFormData.correctAnswerText}
+                          onChange={(e) => setQuestionFormData({...questionFormData, correctAnswerText: e.target.value})}
+                          className="w-full px-4 py-2 border rounded-lg"
+                        />
+                      </div>
+                    )}
+                    {questionFormData.questionType === 'MULTIPLE_CHOICE' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Options *</label>
+                        {questionFormData.options.map((option, index) => (
+                          <div key={index} className="flex items-center space-x-2 mb-2">
+                            <input
+                              type="text"
+                              value={option.optionText}
+                              onChange={(e) => updateOption(index, 'optionText', e.target.value)}
+                              placeholder={`Option ${index + 1}`}
+                              className="flex-1 px-4 py-2 border rounded-lg"
+                              required
+                            />
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={option.isCorrect}
+                                onChange={(e) => updateOption(index, 'isCorrect', e.target.checked)}
+                                className="rounded"
+                              />
+                              <span className="text-sm text-gray-700">Correct</span>
+                            </label>
+                            {questionFormData.options.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeOption(index)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={addOption}
+                          className="mt-2 text-primary-600 hover:text-primary-900 text-sm"
+                        >
+                          + Add Option
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                      <button
+                        type="submit"
+                        className="flex-1 bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700"
+                      >
+                        {editingQuestion ? 'Update Question' : 'Create Question'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowQuestionForm(false)
+                          setEditingQuestion(null)
+                          resetQuestionForm()
+                        }}
+                        className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           )}
 

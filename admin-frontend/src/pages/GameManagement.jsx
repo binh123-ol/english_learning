@@ -185,11 +185,13 @@ export default function GameManagement() {
       </div>
 
       {showForm && (
-        <div className="card">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">
-            {editingGame ? 'Edit Game' : 'Create New Game'}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                {editingGame ? 'Edit Game' : 'Create New Game'}
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
@@ -285,7 +287,7 @@ export default function GameManagement() {
                 <span className="text-sm text-gray-700">Active</span>
               </label>
             </div>
-            <div className="flex space-x-3">
+            <div className="flex space-x-3 pt-4 border-t border-gray-200">
               <button
                 type="submit"
                 className="flex-1 bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700"
@@ -305,6 +307,8 @@ export default function GameManagement() {
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
       )}
 

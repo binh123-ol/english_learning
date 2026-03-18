@@ -201,7 +201,11 @@ export default function Assessment() {
       const formData = new FormData()
       formData.append('file', audioBlob, `speaking-${questionId}.webm`)
 
-      const response = await axios.post('/files/upload/audio', formData, {
+      const response = await axios.post('/files/upload/recording', formData, {
+        params: {
+          type: 'ASSESSMENT',
+          referenceId: assessment.assessmentId
+        },
         headers: {
           'Content-Type': 'multipart/form-data'
         }
