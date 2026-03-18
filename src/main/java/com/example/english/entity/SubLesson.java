@@ -1,10 +1,13 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sub_lessons")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SubLesson {
     @Id
     @Column(name = "sub_lesson_id")
@@ -27,6 +30,7 @@ public class SubLesson {
     private Boolean isActive = true;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // Getters and Setters

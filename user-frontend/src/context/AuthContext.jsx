@@ -38,9 +38,12 @@ export const AuthProvider = ({ children }) => {
     const { token, ...userData } = response.data
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(userData))
-    // Store userId separately for easy access by game sessions
+    // Store userId and roles separately for easy access
     if (userData.userId) {
       localStorage.setItem('userId', userData.userId)
+    }
+    if (userData.roles) {
+      localStorage.setItem('roles', JSON.stringify(userData.roles))
     }
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     setUser(userData)

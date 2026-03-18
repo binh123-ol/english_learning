@@ -1,5 +1,7 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "lesson_exercises")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LessonExercise {
     @Id
     @Column(name = "exercise_id")
@@ -39,6 +42,7 @@ public class LessonExercise {
     private Boolean isActive = true;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,10 +1,13 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "learning_paths")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LearningPath {
     @Id
     @Column(name = "path_id")
@@ -25,15 +28,18 @@ public class LearningPath {
     private Integer progressPercentage = 0;
 
     @Column(name = "started_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startedAt;
 
     @Column(name = "completed_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime completedAt;
 
     @Column(name = "recommended_order")
     private Integer recommendedOrder;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // Getters and Setters

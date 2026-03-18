@@ -28,6 +28,12 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const response = await axios.post('http://localhost:8080/api/auth/login', { email, password })
     const { token, ...userData } = response.data
+    
+    // Security check: Only allow users with ROLE_ADMIN to login to admin dashboard
+    if (!userData.roles?.includes('ROLE_ADMIN')) {
+      throw new Error('Access denied: You do not have administrator privileges.')
+    }
+
     localStorage.setItem('admin_token', token)
     localStorage.setItem('admin_user', JSON.stringify(userData))
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`

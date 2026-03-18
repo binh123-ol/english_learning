@@ -18,7 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import com.example.english.entity.Role;
+import com.example.english.repository.RoleRepository;
 
 @Service
 public class AuthService {
@@ -28,6 +33,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -54,13 +62,22 @@ public class AuthService {
         user.setLevelTarget(request.getLevelTarget());
         user.setCreatedAt(LocalDateTime.now());
 
+        // Assign default role
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        user.setRoles(Collections.singleton(userRole));
+
         userRepository.save(user);
 
         // Generate JWT token
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthResponse(token, user.getUserId(), user.getEmail(), user.getUsername());
+        List<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        return new AuthResponse(token, user.getUserId(), user.getEmail(), user.getUsername(), roles);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -77,6 +94,10 @@ public class AuthService {
         // Generate JWT token
         String token = jwtUtil.generateToken(userDetails);
 
-        return new AuthResponse(token, user.getUserId(), user.getEmail(), user.getUsername());
+        List<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
+        return new AuthResponse(token, user.getUserId(), user.getEmail(), user.getUsername(), roles);
     }
 }

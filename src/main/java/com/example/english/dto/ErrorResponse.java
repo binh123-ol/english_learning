@@ -1,22 +1,21 @@
 package com.example.english.dto;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ErrorResponse {
-    private LocalDateTime timestamp;
+    private String timestamp;
     private int status;
     private String error;
     private String message;
     private String path;
     private Map<String, String> validationErrors;
-
+ 
     public ErrorResponse() {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = java.time.LocalDateTime.now().toString();
     }
 
     public ErrorResponse(int status, String error, String message, String path) {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = java.time.LocalDateTime.now().toString();
         this.status = status;
         this.error = error;
         this.message = message;
@@ -24,11 +23,11 @@ public class ErrorResponse {
     }
 
     // Getters and Setters
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
-
-    public void setTimestamp(LocalDateTime timestamp) {
+ 
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -3,9 +3,6 @@ import { useLocation } from 'react-router-dom'
 import { X, Send, Minimize2, Maximize2 } from 'lucide-react'
 import api from '../api/axios'
 
-const GEMINI_API_KEY = 'AIzaSyAl_H0qNCBSMyFH0skpP3_WZgruFet5N-M'
-// Using gemini-2.0-flash as gemini-1.5-flash is not available
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`
 
 export default function ChatBox({ isOpen, onClose }) {
     const location = useLocation()
@@ -91,34 +88,15 @@ export default function ChatBox({ isOpen, onClose }) {
                 systemPrompt += "\n\nThe user is practicing pronunciation. Provide practice texts and pronunciation tips."
             }
 
-            console.log('Sending request to Gemini:', GEMINI_API_URL)
-
-            const response = await fetch(GEMINI_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `${systemPrompt}\n\nUser: ${userInput}\n\nAssistant:`
-                        }]
-                    }]
-                })
+            const response = await api.post('/ai/chat', {
+                message: userInput,
+                systemPrompt: systemPrompt
             })
 
-            if (!response.ok) {
-                const errorBody = await response.text()
-                console.error('Gemini API Error Body:', errorBody)
-                throw new Error(`API Error: ${response.status} - ${errorBody}`)
-            }
-
-            const data = await response.json()
-
-            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+            if (response.data && response.data.response) {
                 const aiMessage = {
                     role: 'assistant',
-                    content: data.candidates[0].content.parts[0].text
+                    content: response.data.response
                 }
                 setMessages(prev => [...prev, aiMessage])
             } else {

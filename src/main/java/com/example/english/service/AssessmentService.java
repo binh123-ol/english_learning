@@ -5,6 +5,8 @@ import com.example.english.entity.*;
 import com.example.english.exception.BadRequestException;
 import com.example.english.exception.ResourceNotFoundException;
 import com.example.english.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AssessmentService {
+ 
+    private static final Logger logger = LoggerFactory.getLogger(AssessmentService.class);
 
     @Autowired
     private LevelAssessmentRepository assessmentRepository;
@@ -42,7 +46,8 @@ public class AssessmentService {
     };
 
     @Transactional
-    public LevelAssessment createAssessment(String userId) {
+    public LevelAssessmentDTO createAssessment(String userId) {
+        logger.info("Creating new assessment for user: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
@@ -51,17 +56,18 @@ public class AssessmentService {
         assessment.setUser(user);
         assessment.setCreatedAt(LocalDateTime.now());
 
-        return assessmentRepository.save(assessment);
+        LevelAssessment saved = assessmentRepository.save(assessment);
+        return convertToDTO(saved);
     }
 
     @Transactional
-    public LevelAssessment completeAssessment(String assessmentId, 
-                                             BigDecimal listeningScore,
-                                             BigDecimal readingScore,
-                                             BigDecimal writingScore,
-                                             BigDecimal speakingScore,
-                                             BigDecimal grammarScore,
-                                             BigDecimal vocabularyScore) {
+    public LevelAssessmentDTO completeAssessment(String assessmentId, 
+                                              BigDecimal listeningScore,
+                                              BigDecimal readingScore,
+                                              BigDecimal writingScore,
+                                              BigDecimal speakingScore,
+                                              BigDecimal grammarScore,
+                                              BigDecimal vocabularyScore) {
         LevelAssessment assessment = assessmentRepository.findById(assessmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment", "id", assessmentId));
 
@@ -100,7 +106,8 @@ public class AssessmentService {
         user.setAssessmentCompleted(true);
         userRepository.save(user);
 
-        return assessmentRepository.save(assessment);
+        LevelAssessment saved = assessmentRepository.save(assessment);
+        return convertToDTO(saved);
     }
 
     /**
@@ -123,6 +130,18 @@ public class AssessmentService {
                     .stream()
                     .limit(QUESTIONS_PER_SKILL)
                     .collect(Collectors.toList());
+
+            // If no questions found for any skill, auto-initialize with template
+            if (questions.isEmpty()) {
+                logger.info("No questions found for skill: {}, initializing template...", skillType);
+                createAssessmentTemplate("Default Assessment");
+                // Reload questions after initialization
+                questions = questionRepository
+                    .findBySkillTypeOrderByOrderIndexAsc(skillType)
+                    .stream()
+                    .limit(QUESTIONS_PER_SKILL)
+                    .collect(Collectors.toList());
+            }
 
             List<AssessmentQuestionDTO> questionDTOs = questions.stream()
                     .map(this::convertToDTO)
@@ -184,14 +203,14 @@ public class AssessmentService {
                 }
                 answer.setSelectedOptionId(answerDTO.getSelectedOptionId());
             } else if ("TEXT_INPUT".equals(question.getQuestionType()) || "FILL_BLANK".equals(question.getQuestionType())) {
-                if (answerDTO.getTextResponse() != null && 
+                if (answerDTO.getTextResponse() != null && question.getCorrectAnswerText() != null &&
                     answerDTO.getTextResponse().trim().equalsIgnoreCase(question.getCorrectAnswerText().trim())) {
                     isCorrect = true;
                     scoreEarned = question.getScorePoints();
                 }
                 answer.setTextResponse(answerDTO.getTextResponse());
             } else if ("TRUE_FALSE".equals(question.getQuestionType())) {
-                if (answerDTO.getTextResponse() != null && 
+                if (answerDTO.getTextResponse() != null && question.getCorrectAnswerText() != null &&
                     answerDTO.getTextResponse().trim().equalsIgnoreCase(question.getCorrectAnswerText().trim())) {
                     isCorrect = true;
                     scoreEarned = question.getScorePoints();
@@ -261,12 +280,12 @@ public class AssessmentService {
         assessment.setVocabularyScore(vocabularyScore);
 
         // Calculate overall score
-        BigDecimal overallScore = listeningScore
-                .add(readingScore)
-                .add(writingScore)
-                .add(speakingScore)
-                .add(grammarScore)
-                .add(vocabularyScore)
+        BigDecimal overallScore = (listeningScore != null ? listeningScore : BigDecimal.ZERO)
+                .add(readingScore != null ? readingScore : BigDecimal.ZERO)
+                .add(writingScore != null ? writingScore : BigDecimal.ZERO)
+                .add(speakingScore != null ? speakingScore : BigDecimal.ZERO)
+                .add(grammarScore != null ? grammarScore : BigDecimal.ZERO)
+                .add(vocabularyScore != null ? vocabularyScore : BigDecimal.ZERO)
                 .divide(BigDecimal.valueOf(6), 2, RoundingMode.HALF_UP);
 
         assessment.setOverallScore(overallScore);
@@ -311,7 +330,7 @@ public class AssessmentService {
                 .collect(Collectors.toList());
         
         BigDecimal maxScore = questions.stream()
-                .map(AssessmentQuestion::getScorePoints)
+                .map(q -> q.getScorePoints() != null ? q.getScorePoints() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         if (maxScore.compareTo(BigDecimal.ZERO) == 0) {
@@ -356,6 +375,7 @@ public class AssessmentService {
     }
 
     private String determineLevel(BigDecimal score) {
+        if (score == null) return "BEGINNER";
         double scoreValue = score.doubleValue();
         if (scoreValue >= 80) return "ADVANCED";
         if (scoreValue >= 65) return "UPPER_INTERMEDIATE";
@@ -364,22 +384,48 @@ public class AssessmentService {
         return "BEGINNER";
     }
 
-    public LevelAssessment getAssessmentById(String id) {
-        return assessmentRepository.findById(id)
+    public LevelAssessmentDTO getAssessmentById(String id) {
+        LevelAssessment assessment = assessmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Assessment", "id", id));
+        return convertToDTO(assessment);
     }
 
-    public List<LevelAssessment> getUserAssessments(String userId) {
+    public List<LevelAssessmentDTO> getUserAssessments(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        return assessmentRepository.findByUser(user);
+        return assessmentRepository.findByUser(user).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public LevelAssessment getLatestAssessment(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        return assessmentRepository.findFirstByUserOrderByCompletedAtDesc(user)
-                .orElseThrow(() -> new ResourceNotFoundException("Assessment", "userId", userId));
+    public LevelAssessmentDTO getLatestAssessment(String userId) {
+        logger.debug("Fetching latest assessment for user: {}", userId);
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            logger.warn("User not found when fetching latest assessment: {}", userId);
+            return null;
+        }
+        
+        return assessmentRepository.findFirstByUserOrderByCompletedAtDesc(userOpt.get())
+                .map(this::convertToDTO)
+                .orElse(null);
+    }
+
+    private LevelAssessmentDTO convertToDTO(LevelAssessment assessment) {
+        LevelAssessmentDTO dto = new LevelAssessmentDTO();
+        dto.setAssessmentId(assessment.getAssessmentId());
+        dto.setUserId(assessment.getUser() != null ? assessment.getUser().getUserId() : null);
+        dto.setListeningScore(assessment.getListeningScore());
+        dto.setReadingScore(assessment.getReadingScore());
+        dto.setWritingScore(assessment.getWritingScore());
+        dto.setSpeakingScore(assessment.getSpeakingScore());
+        dto.setGrammarScore(assessment.getGrammarScore());
+        dto.setVocabularyScore(assessment.getVocabularyScore());
+        dto.setOverallLevel(assessment.getOverallLevel());
+        dto.setOverallScore(assessment.getOverallScore());
+        dto.setCompletedAt(assessment.getCompletedAt() != null ? assessment.getCompletedAt().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+        dto.setCreatedAt(assessment.getCreatedAt() != null ? assessment.getCreatedAt().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+        return dto;
     }
 
     // Admin methods for managing assessment questions

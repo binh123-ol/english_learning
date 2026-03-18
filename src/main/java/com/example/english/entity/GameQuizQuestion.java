@@ -1,11 +1,14 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "game_quiz_questions")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class GameQuizQuestion {
     @Id
     @Column(name = "question_id")
@@ -38,6 +41,7 @@ public class GameQuizQuestion {
     private String explanation;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @PrePersist

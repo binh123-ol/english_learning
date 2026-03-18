@@ -41,6 +41,12 @@ export default function Layout() {
                 <Link to="/dashboard/results" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-100">
                   Results
                 </Link>
+                {user?.roles?.includes('ROLE_ADMIN') && (
+                  <a href="http://localhost:5174" target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded-md text-sm font-bold text-purple-600 hover:text-purple-700 hover:bg-purple-50 flex items-center">
+                    <Trophy className="w-4 h-4 mr-1" />
+                    Admin Panel
+                  </a>
+                )}
               </div>
             </div>
             <div className="flex items-center space-x-4">

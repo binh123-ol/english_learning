@@ -132,7 +132,7 @@ public class RecommendationService {
         // Recommend lessons for weakest skill area
         return lessonRepository.findByLevelAndLessonType(userLevel, weakestSkill)
                 .stream()
-                .filter(Lesson::getIsActive)
+                .filter(l -> Boolean.TRUE.equals(l.getIsActive()))
                 .limit(5)
                 .collect(Collectors.toList());
     }

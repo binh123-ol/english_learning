@@ -1,11 +1,14 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "conversation_messages")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ConversationMessage {
     @Id
     @Column(name = "message_id")
@@ -35,6 +38,7 @@ public class ConversationMessage {
     private String feedback;
 
     @Column(name = "sent_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime sentAt;
 
     // Getters and Setters

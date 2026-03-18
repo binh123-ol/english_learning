@@ -1,11 +1,14 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_recordings")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserRecording {
     @Id
     @Column(name = "recording_id")
@@ -36,6 +39,7 @@ public class UserRecording {
     private BigDecimal pronunciationScore;
 
     @Column(name = "created_at", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // Getters and Setters

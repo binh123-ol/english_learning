@@ -1,20 +1,24 @@
 package com.example.english.dto;
 
+import java.util.List;
+
 public class AuthResponse {
     private String token;
     private String userId;
     private String email;
     private String username;
+    private List<String> roles;
     private String message;
 
     public AuthResponse() {
     }
 
-    public AuthResponse(String token, String userId, String email, String username) {
+    public AuthResponse(String token, String userId, String email, String username, List<String> roles) {
         this.token = token;
         this.userId = userId;
         this.email = email;
         this.username = username;
+        this.roles = roles;
     }
 
     public AuthResponse(String message) {
@@ -60,5 +64,13 @@ public class AuthResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

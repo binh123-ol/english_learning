@@ -383,6 +383,11 @@ public class AIService {
         return callGemini(prompt);
     }
 
+    public String getChatResponse(String message, String systemPrompt) {
+        String prompt = (systemPrompt != null ? systemPrompt : "") + "\n\nUser: " + message + "\n\nAssistant:";
+        return callGemini(prompt);
+    }
+
     private String callGemini(String prompt) {
         try {
             Map<String, Object> part = Map.of("text", prompt);

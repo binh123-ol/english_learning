@@ -66,6 +66,13 @@ public class AIController {
         return ResponseEntity.ok(aiService.analyzeText(request.getText()));
     }
 
+    @PostMapping("/chat")
+    @Operation(summary = "AI Chat", description = "Context-aware AI English tutor chat")
+    public ResponseEntity<Map<String, String>> chat(@RequestBody ChatRequest request) {
+        String response = aiService.getChatResponse(request.getMessage(), request.getSystemPrompt());
+        return ResponseEntity.ok(Map.of("response", response));
+    }
+
     // Inner classes for request bodies
     public static class TextRequest {
         private String text;
@@ -82,6 +89,16 @@ public class AIController {
         public void setText(String text) { this.text = text; }
         public String getAudioFileUrl() { return audioFileUrl; }
         public void setAudioFileUrl(String audioFileUrl) { this.audioFileUrl = audioFileUrl; }
+    }
+
+    public static class ChatRequest {
+        private String message;
+        private String systemPrompt;
+
+        public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
+        public String getSystemPrompt() { return systemPrompt; }
+        public void setSystemPrompt(String systemPrompt) { this.systemPrompt = systemPrompt; }
     }
 }
 

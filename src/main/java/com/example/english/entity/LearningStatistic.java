@@ -1,11 +1,14 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "learning_statistics")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LearningStatistic {
     @Id
     @Column(name = "statistic_id")
@@ -16,6 +19,7 @@ public class LearningStatistic {
     private User user;
 
     @Column(name = "stat_date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate statDate;
 
     @Column(name = "lessons_completed", nullable = false)
@@ -40,6 +44,7 @@ public class LearningStatistic {
     private Integer streakDays = 0;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // Getters and Setters

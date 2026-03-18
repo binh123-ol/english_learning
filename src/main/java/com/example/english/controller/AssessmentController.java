@@ -2,7 +2,6 @@ package com.example.english.controller;
 
 import com.example.english.dto.*;
 import com.example.english.entity.AssessmentQuestion;
-import com.example.english.entity.LevelAssessment;
 import com.example.english.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,8 +31,8 @@ public class AssessmentController {
         @ApiResponse(responseCode = "201", description = "Assessment created successfully"),
         @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ResponseEntity<LevelAssessment> createAssessment(@PathVariable String userId) {
-        LevelAssessment assessment = assessmentService.createAssessment(userId);
+    public ResponseEntity<LevelAssessmentDTO> createAssessment(@PathVariable String userId) {
+        LevelAssessmentDTO assessment = assessmentService.createAssessment(userId);
         return new ResponseEntity<>(assessment, HttpStatus.CREATED);
     }
 
@@ -44,10 +43,10 @@ public class AssessmentController {
         @ApiResponse(responseCode = "400", description = "Assessment already completed"),
         @ApiResponse(responseCode = "404", description = "Assessment not found")
     })
-    public ResponseEntity<LevelAssessment> completeAssessment(
+    public ResponseEntity<LevelAssessmentDTO> completeAssessment(
             @PathVariable String assessmentId,
             @RequestBody AssessmentScoresRequest request) {
-        LevelAssessment assessment = assessmentService.completeAssessment(
+        LevelAssessmentDTO assessment = assessmentService.completeAssessment(
                 assessmentId,
                 request.getListeningScore(),
                 request.getReadingScore(),
@@ -61,19 +60,19 @@ public class AssessmentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get assessment", description = "Get assessment by ID")
-    public ResponseEntity<LevelAssessment> getAssessment(@PathVariable String id) {
+    public ResponseEntity<LevelAssessmentDTO> getAssessment(@PathVariable String id) {
         return ResponseEntity.ok(assessmentService.getAssessmentById(id));
     }
 
     @GetMapping("/users/{userId}")
     @Operation(summary = "Get user assessments", description = "Get all assessments for a user")
-    public ResponseEntity<List<LevelAssessment>> getUserAssessments(@PathVariable String userId) {
+    public ResponseEntity<List<LevelAssessmentDTO>> getUserAssessments(@PathVariable String userId) {
         return ResponseEntity.ok(assessmentService.getUserAssessments(userId));
     }
 
     @GetMapping("/users/{userId}/latest")
     @Operation(summary = "Get latest assessment", description = "Get the latest assessment for a user")
-    public ResponseEntity<LevelAssessment> getLatestAssessment(@PathVariable String userId) {
+    public ResponseEntity<LevelAssessmentDTO> getLatestAssessment(@PathVariable String userId) {
         return ResponseEntity.ok(assessmentService.getLatestAssessment(userId));
     }
 

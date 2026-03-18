@@ -1,10 +1,13 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "game_rounds")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class GameRound {
     @Id
     @Column(name = "round_id")
@@ -21,9 +24,11 @@ public class GameRound {
     private String roundData; // JSON data
 
     @Column(name = "started_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startedAt;
 
     @Column(name = "finished_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
     // Getters and Setters

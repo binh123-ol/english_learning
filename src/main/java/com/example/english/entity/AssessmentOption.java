@@ -1,9 +1,11 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "assessment_options")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AssessmentOption {
     @Id
     @Column(name = "option_id")

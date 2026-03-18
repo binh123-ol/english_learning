@@ -1,11 +1,14 @@
 package com.example.english.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "room_players")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RoomPlayer {
     @Id
     @Column(name = "room_player_id")
@@ -35,9 +38,11 @@ public class RoomPlayer {
     private String status = "JOINED"; // JOINED, READY, PLAYING, FINISHED
 
     @Column(name = "joined_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime joinedAt;
 
     @Column(name = "finished_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
     // Getters and Setters

@@ -163,20 +163,22 @@ public class AnalyticsService {
      */
     private Map<String, Object> calculateWeeklyStatistics(List<LearningStatistic> stats) {
         Map<String, Object> weekly = new HashMap<>();
-
-        int totalLessons = stats.stream().mapToInt(LearningStatistic::getLessonsCompleted).sum();
-        int totalGames = stats.stream().mapToInt(LearningStatistic::getGamesCompleted).sum();
-        int totalConversations = stats.stream().mapToInt(LearningStatistic::getConversationsCompleted).sum();
-        int totalTime = stats.stream().mapToInt(LearningStatistic::getTotalTimeMinutes).sum();
-        int totalXP = stats.stream().mapToInt(LearningStatistic::getXpEarned).sum();
-
+ 
+        int totalLessons = stats.stream().mapToInt(s -> s.getLessonsCompleted() != null ? s.getLessonsCompleted() : 0).sum();
+        int totalGames = stats.stream().mapToInt(s -> s.getGamesCompleted() != null ? s.getGamesCompleted() : 0).sum();
+        int totalConversations = stats.stream().mapToInt(s -> s.getConversationsCompleted() != null ? s.getConversationsCompleted() : 0).sum();
+        int totalExams = stats.stream().mapToInt(s -> s.getExamsCompleted() != null ? s.getExamsCompleted() : 0).sum();
+        int totalTime = stats.stream().mapToInt(s -> s.getTotalTimeMinutes() != null ? s.getTotalTimeMinutes() : 0).sum();
+        int totalXP = stats.stream().mapToInt(s -> s.getXpEarned() != null ? s.getXpEarned() : 0).sum();
+ 
         weekly.put("lessonsCompleted", totalLessons);
         weekly.put("gamesCompleted", totalGames);
         weekly.put("conversationsCompleted", totalConversations);
+        weekly.put("examsCompleted", totalExams);
         weekly.put("totalTimeMinutes", totalTime);
         weekly.put("totalXP", totalXP);
         weekly.put("averageTimePerDay", stats.isEmpty() ? 0 : totalTime / stats.size());
-
+ 
         return weekly;
     }
 
@@ -185,20 +187,22 @@ public class AnalyticsService {
      */
     private Map<String, Object> calculateMonthlyStatistics(List<LearningStatistic> stats) {
         Map<String, Object> monthly = new HashMap<>();
-
-        int totalLessons = stats.stream().mapToInt(LearningStatistic::getLessonsCompleted).sum();
-        int totalGames = stats.stream().mapToInt(LearningStatistic::getGamesCompleted).sum();
-        int totalConversations = stats.stream().mapToInt(LearningStatistic::getConversationsCompleted).sum();
-        int totalTime = stats.stream().mapToInt(LearningStatistic::getTotalTimeMinutes).sum();
-        int totalXP = stats.stream().mapToInt(LearningStatistic::getXpEarned).sum();
-
+ 
+        int totalLessons = stats.stream().mapToInt(s -> s.getLessonsCompleted() != null ? s.getLessonsCompleted() : 0).sum();
+        int totalGames = stats.stream().mapToInt(s -> s.getGamesCompleted() != null ? s.getGamesCompleted() : 0).sum();
+        int totalConversations = stats.stream().mapToInt(s -> s.getConversationsCompleted() != null ? s.getConversationsCompleted() : 0).sum();
+        int totalExams = stats.stream().mapToInt(s -> s.getExamsCompleted() != null ? s.getExamsCompleted() : 0).sum();
+        int totalTime = stats.stream().mapToInt(s -> s.getTotalTimeMinutes() != null ? s.getTotalTimeMinutes() : 0).sum();
+        int totalXP = stats.stream().mapToInt(s -> s.getXpEarned() != null ? s.getXpEarned() : 0).sum();
+ 
         monthly.put("lessonsCompleted", totalLessons);
         monthly.put("gamesCompleted", totalGames);
         monthly.put("conversationsCompleted", totalConversations);
+        monthly.put("examsCompleted", totalExams);
         monthly.put("totalTimeMinutes", totalTime);
         monthly.put("totalXP", totalXP);
         monthly.put("averageTimePerDay", stats.isEmpty() ? 0 : totalTime / stats.size());
-
+ 
         return monthly;
     }
 
@@ -216,10 +220,10 @@ public class AnalyticsService {
         overall.put("completedActivities", completedProgress.size());
         overall.put("completionRate", allProgress.isEmpty() ? 0.0
                 : (double) completedProgress.size() / allProgress.size() * 100);
-        overall.put("totalXP", user.getTotalXP());
-        overall.put("learningStreak", user.getLearningStreak());
-        overall.put("currentLevel", user.getCurrentLevel());
-        overall.put("levelTarget", user.getLevelTarget());
+        overall.put("totalXP", user.getTotalXP() != null ? user.getTotalXP() : 0);
+        overall.put("learningStreak", user.getLearningStreak() != null ? user.getLearningStreak() : 0);
+        overall.put("currentLevel", user.getCurrentLevel() != null ? user.getCurrentLevel() : "BEGINNER");
+        overall.put("levelTarget", user.getLevelTarget() != null ? user.getLevelTarget() : "UNKNOWN");
 
         // Calculate progress by type
         Map<String, Long> progressByType = completedProgress.stream()

@@ -19,7 +19,22 @@ DELETE FROM conversations;
 DELETE FROM games;
 DELETE FROM lessons;
 DELETE FROM assessment_options;
+DELETE FROM assessment_options;
 DELETE FROM assessment_questions;
+DELETE FROM user_roles;
+DELETE FROM roles;
+DELETE FROM users;
+
+-- ============================================
+-- 0. INSERT ROLES AND ADMIN USER
+-- ============================================
+INSERT INTO roles (role_id, name) VALUES (1, 'ROLE_USER'), (2, 'ROLE_ADMIN');
+
+-- Password for '123' using BCrypt
+INSERT INTO users (user_id, username, email, hashed_password, level_target, current_level, learning_streak, total_xp, assessment_completed, created_at) VALUES
+('ADMIN-001', 'binhadmin123', 'admin@example.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOn2', 'ADVANCED', 'ADVANCED', 0, 100, TRUE, NOW());
+
+INSERT INTO user_roles (user_id, role_id) VALUES ('ADMIN-001', 2);
 
 -- ============================================
 -- 1. INSERT LESSONS
