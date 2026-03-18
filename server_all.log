@@ -7288,3 +7288,1884 @@ Vosk model not found at path: D:englishmodelsvosk-model-small-en-us-0.15. Pronun
 2026-03-18 09:18:50 - Set SecurityContextHolder to anonymous SecurityContext
 2026-03-18 09:18:50 - Secured POST /api/ai/chat
 Calling Gemini API: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+2026-03-18 09:20:07 - Securing GET /api/conversations/users/34606210-dab2-4c2b-a32a-b07fa75151ca
+2026-03-18 09:20:07 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:07 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:07 - Secured GET /api/conversations/users/34606210-dab2-4c2b-a32a-b07fa75151ca
+2026-03-18 09:20:07 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        u1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        u1_0.user_id=?
+2026-03-18 09:20:07 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    where
+        c1_0.user_id=?
+2026-03-18 09:20:07 - Securing GET /api/conversations/users/34606210-dab2-4c2b-a32a-b07fa75151ca
+2026-03-18 09:20:07 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:07 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:07 - Secured GET /api/conversations/users/34606210-dab2-4c2b-a32a-b07fa75151ca
+2026-03-18 09:20:07 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        u1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        u1_0.user_id=?
+2026-03-18 09:20:07 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    where
+        c1_0.user_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    where
+        c1_0.user_id=?
+2026-03-18 09:20:09 - Securing GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:09 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:09 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:09 - Secured GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:09 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:09 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+2026-03-18 09:20:09 - Securing GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:09 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:09 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:09 - Secured GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:09 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:09 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+2026-03-18 09:20:12 - Securing OPTIONS /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:12 - Securing POST /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:12 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:12 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:12 - Secured POST /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:12 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:12 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Calling Gemini API: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+Calling Gemini API: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+2026-03-18 09:20:18 - Securing GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:18 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:18 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:18 - Secured GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:18 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:18 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+2026-03-18 09:20:18 - Securing GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:18 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:18 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:18 - Secured GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:18 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:18 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+2026-03-18 09:20:21 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+2026-03-18 09:20:21 - 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-18 09:20:21 - 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-18 09:20:21 - 
+    update
+        conversations 
+    set
+        created_at=?,
+        difficulty_level=?,
+        ended_at=?,
+        messages_count=?,
+        started_at=?,
+        status=?,
+        topic=?,
+        user_id=?,
+        xp_earned=? 
+    where
+        conversation_id=?
+Hibernate: 
+    update
+        conversations 
+    set
+        created_at=?,
+        difficulty_level=?,
+        ended_at=?,
+        messages_count=?,
+        started_at=?,
+        status=?,
+        topic=?,
+        user_id=?,
+        xp_earned=? 
+    where
+        conversation_id=?
+2026-03-18 09:20:24 - Securing POST /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:24 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:24 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:24 - Secured POST /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:24 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:24 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Calling Gemini API: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+Calling Gemini API: https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+2026-03-18 09:20:30 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    join
+        conversations c1_0 
+            on c1_0.conversation_id=cm1_0.conversation_id 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    where
+        cm1_0.message_id=?
+2026-03-18 09:20:30 - 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-18 09:20:30 - 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        conversation_messages
+        (content, conversation_id, feedback, grammar_errors, pronunciation_score, sender_type, sent_at, spelling_errors, message_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-03-18 09:20:30 - 
+    update
+        conversations 
+    set
+        created_at=?,
+        difficulty_level=?,
+        ended_at=?,
+        messages_count=?,
+        started_at=?,
+        status=?,
+        topic=?,
+        user_id=?,
+        xp_earned=? 
+    where
+        conversation_id=?
+Hibernate: 
+    update
+        conversations 
+    set
+        created_at=?,
+        difficulty_level=?,
+        ended_at=?,
+        messages_count=?,
+        started_at=?,
+        status=?,
+        topic=?,
+        user_id=?,
+        xp_earned=? 
+    where
+        conversation_id=?
+2026-03-18 09:20:30 - Securing GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:30 - 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        u1_0.total_xp,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2026-03-18 09:20:30 - 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name 
+    from
+        user_roles r1_0 
+    join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        r1_0.user_id=?
+2026-03-18 09:20:30 - Secured GET /api/conversations/84e4fa91-7ddb-4e00-975e-832d19b7f2ce/messages
+2026-03-18 09:20:30 - 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+Hibernate: 
+    select
+        c1_0.conversation_id,
+        c1_0.created_at,
+        c1_0.difficulty_level,
+        c1_0.ended_at,
+        c1_0.messages_count,
+        c1_0.started_at,
+        c1_0.status,
+        c1_0.topic,
+        c1_0.user_id,
+        u1_0.user_id,
+        u1_0.assessment_completed,
+        u1_0.created_at,
+        u1_0.current_level,
+        u1_0.email,
+        u1_0.hashed_password,
+        u1_0.last_activity_date,
+        u1_0.learning_streak,
+        u1_0.level_target,
+        r1_0.user_id,
+        r1_1.role_id,
+        r1_1.name,
+        u1_0.total_xp,
+        u1_0.username,
+        c1_0.xp_earned 
+    from
+        conversations c1_0 
+    join
+        users u1_0 
+            on u1_0.user_id=c1_0.user_id 
+    left join
+        user_roles r1_0 
+            on u1_0.user_id=r1_0.user_id 
+    left join
+        roles r1_1 
+            on r1_1.role_id=r1_0.role_id 
+    where
+        c1_0.conversation_id=?
+2026-03-18 09:20:30 - 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
+Hibernate: 
+    select
+        cm1_0.message_id,
+        cm1_0.content,
+        cm1_0.conversation_id,
+        cm1_0.feedback,
+        cm1_0.grammar_errors,
+        cm1_0.pronunciation_score,
+        cm1_0.sender_type,
+        cm1_0.sent_at,
+        cm1_0.spelling_errors 
+    from
+        conversation_messages cm1_0 
+    where
+        cm1_0.conversation_id=? 
+    order by
+        cm1_0.sent_at
