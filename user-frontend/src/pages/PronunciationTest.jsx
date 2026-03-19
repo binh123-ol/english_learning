@@ -60,7 +60,11 @@ export default function PronunciationTest() {
 
     recognition.onerror = (event) => {
       console.error('Speech recognition error', event.error)
-      setError('Lỗi nhận dạng giọng nói: ' + event.error)
+      if (event.error === 'no-speech') {
+        setError('Không nghe thấy âm thanh. Vui lòng thử lại.')
+      } else {
+        setError('Lỗi nhận dạng giọng nói: ' + event.error)
+      }
       setIsListening(false)
     }
 

@@ -21,8 +21,22 @@ export default function ConversationChat() {
   const [aiReviewFeedback, setAiReviewFeedback] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
+  // Practice Mode state
+  const [isPracticing, setIsPracticing] = useState(false)
+  const [practiceTranscript, setPracticeTranscript] = useState('')
+  const [practiceDetails, setPracticeDetails] = useState([])
+  const [practiceScore, setPracticeScore] = useState(null)
+  const practiceRef = useRef(null)
+
   const messagesEndRef = useRef(null)
   const recognitionRef = useRef(null)
+
+  // Auto-fetch AI feedback when recording stops
+  useEffect(() => {
+    if (!isRecording && transcript && !aiReviewFeedback && !isAnalyzing) {
+      handleGetAIFeedback()
+    }
+  }, [isRecording])
 
   useEffect(() => {
     if (!user) {
@@ -66,23 +80,13 @@ export default function ConversationChat() {
     recognition.onresult = (event) => {
       let currentInterim = ''
       let finalTranscript = ''
-      let newDetails = []
 
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         const result = event.results[i]
         const transcriptText = result[0].transcript
-        const confidence = result[0].confidence
 
         if (result.isFinal) {
           finalTranscript += transcriptText
-          // Process confidence for coloring
-          const words = transcriptText.trim().split(/\s+/)
-          words.forEach(word => {
-            let status = 'correct'
-            if (confidence < 0.6) status = 'incorrect'
-            else if (confidence < 0.85) status = 'fair'
-            newDetails.push({ word, status })
-          })
         } else {
           currentInterim += transcriptText
         }
@@ -90,7 +94,6 @@ export default function ConversationChat() {
 
       if (finalTranscript) {
         setTranscript(prev => prev + ' ' + finalTranscript)
-        setConfidenceDetails(prev => [...prev, ...newDetails])
       }
       setInterimTranscript(currentInterim)
     }
@@ -138,14 +141,98 @@ export default function ConversationChat() {
     window.speechSynthesis.speak(utterance)
   }
 
+  const compareTexts = (expected, actual) => {
+    if (!expected || !actual) return { score: 0, details: [] }
+
+    const cleanBox = (str) => str.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(x => x)
+    const expectedWords = cleanBox(expected)
+    const actualWords = cleanBox(actual)
+
+    let matchCount = 0
+    let lastFoundIndex = -1
+
+    const wordResults = expectedWords.map(word => {
+      const foundIndex = actualWords.findIndex((w, i) => i > lastFoundIndex && w === word)
+      if (foundIndex !== -1) {
+        lastFoundIndex = foundIndex
+        matchCount++
+        return { word, status: 'correct' }
+      } else {
+        return { word, status: 'incorrect' }
+      }
+    })
+
+    const score = expectedWords.length > 0 ? matchCount / expectedWords.length : 0
+
+    return {
+      score: score,
+      details: wordResults
+    }
+  }
+
+  const startPracticeRecognition = (expectedText) => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Speech recognition not supported')
+      return
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+
+    recognition.lang = 'en-US'
+    recognition.continuous = false
+    recognition.interimResults = false
+
+    recognition.onresult = (event) => {
+      let finalTranscript = ''
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript
+        }
+      }
+
+      if (finalTranscript) {
+        setPracticeTranscript(prev => prev + ' ' + finalTranscript)
+        setPracticeTranscript(current => {
+          const analysis = compareTexts(expectedText, current)
+          setPracticeDetails(analysis.details)
+          setPracticeScore(analysis.score)
+          return current
+        })
+      }
+    }
+
+    recognition.onerror = (event) => {
+      console.error('Practice recognition error', event.error)
+      setIsPracticing(false)
+    }
+
+    recognition.onend = () => {
+      setIsPracticing(false)
+    }
+
+    recognition.start()
+    setIsPracticing(true)
+    setPracticeTranscript('')
+    setPracticeDetails([])
+    setPracticeScore(null)
+    practiceRef.current = recognition
+  }
+
+  const stopPractice = () => {
+    if (practiceRef.current) {
+      practiceRef.current.stop()
+    }
+    setIsPracticing(false)
+  }
+
   const handleGetAIFeedback = async () => {
     if (!transcript) return
     setIsAnalyzing(true)
     setAiReviewFeedback('')
     try {
       const response = await api.post('/speech/analyze', {
-        text: transcript,
-        details: confidenceDetails
+        text: transcript
       })
       setAiReviewFeedback(response.data.feedback)
     } catch (error) {
@@ -308,25 +395,9 @@ export default function ConversationChat() {
                   >
                     {/* Message Content */}
                     <div className="text-lg leading-relaxed">
-                      {details ? (
-                        <div className="flex flex-wrap gap-x-1">
-                          {details.map((d, i) => (
-                            <span
-                              key={i}
-                              className={
-                                d.status === 'correct' ? 'text-white' :
-                                  d.status === 'fair' ? 'text-yellow-200' : 'text-red-300 italic underline decoration-dotted'
-                              }
-                            >
-                              {d.word}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="whitespace-pre-wrap">
-                          {msg.showTranslation && translation ? translation : msg.content}
-                        </p>
-                      )}
+                      <p className="whitespace-pre-wrap">
+                        {msg.showTranslation && translation ? translation : msg.content}
+                      </p>
                     </div>
 
                     {/* Action Bar */}
@@ -374,21 +445,6 @@ export default function ConversationChat() {
                   <span className="text-primary-500">{interimTranscript}</span>
                   <span className="inline-block w-1.5 h-5 bg-primary-600 animate-bounce ml-1"></span>
                 </p>
-                {confidenceDetails.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {confidenceDetails.map((d, i) => (
-                      <span
-                        key={i}
-                        className={
-                          d.status === 'correct' ? 'text-green-600' :
-                            d.status === 'fair' ? 'text-yellow-600' : 'text-red-600 underline decoration-dotted'
-                        }
-                      >
-                        {d.word}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -397,7 +453,7 @@ export default function ConversationChat() {
         </div>
 
         {/* Input Controls */}
-        <div className="p-6 bg-white border-t">
+        <div className="p-6 bg-white border-t flex-shrink-0 max-h-[50vh] overflow-y-auto">
           {speechError && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm animate-pulse flex items-center justify-between">
               <span>{speechError}</span>
@@ -426,35 +482,18 @@ export default function ConversationChat() {
             <div className="flex flex-col space-y-4 animate-fadeIn">
               <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-gray-500 text-xs font-bold uppercase">Review your speech (click terms to hear):</p>
-                  <button
-                    onClick={handleGetAIFeedback}
-                    disabled={isAnalyzing}
-                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm font-medium"
-                  >
-                    <Languages className="w-4 h-4" />
-                    <span>{isAnalyzing ? 'Analyzing...' : 'Get AI Advice (VN)'}</span>
-                  </button>
+                  <p className="text-gray-500 text-xs font-bold uppercase">Review your speech:</p>
+                  {isAnalyzing && (
+                    <span className="text-primary-600 text-sm font-medium flex items-center space-x-1 animate-pulse">
+                      <Languages className="w-4 h-4" />
+                      <span>Analyzing...</span>
+                    </span>
+                  )}
                 </div>
 
-                {confidenceDetails.length > 0 ? (
-                  <div className="flex flex-wrap gap-x-1 text-xl font-medium">
-                    {confidenceDetails.map((d, i) => (
-                      <span
-                        key={i}
-                        onClick={() => speakWord(d.word)}
-                        className={`cursor-pointer hover:bg-white px-1 rounded transition-colors ${d.status === 'correct' ? 'text-green-600' :
-                          d.status === 'fair' ? 'text-yellow-600' : 'text-red-600 underline decoration-dotted'
-                          }`}
-                        title={`Click to hear "${d.word}"`}
-                      >
-                        {d.word}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xl text-gray-800">{transcript}</p>
-                )}
+                <p className="text-xl text-gray-800 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => speakWord(transcript)} title="Click to hear">
+                  {transcript}
+                </p>
 
                 {aiReviewFeedback && (
                   <div className="mt-4 p-5 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl text-slate-700 shadow-sm animate-fadeIn">
@@ -468,6 +507,64 @@ export default function ConversationChat() {
                           {line}
                         </p>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {aiReviewFeedback && (
+                  <div className="mt-4 p-5 bg-white border border-gray-200 rounded-2xl shadow-sm animate-fadeIn">
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xl">🎙️</span>
+                        <h4 className="font-bold text-gray-900 uppercase tracking-wider text-xs">Phát Âm (Practice)</h4>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 mb-4">
+                      Hãy đọc lại câu bạn vừa nói để hệ thống chấm điểm phát âm từng từ nhé:
+                      <br/>
+                      <strong className="text-gray-900 text-lg mt-1 block">"{transcript}"</strong>
+                    </p>
+
+                    <div className="flex flex-col space-y-4">
+                      {!isPracticing ? (
+                        <button
+                          onClick={() => startPracticeRecognition(transcript)}
+                          className="self-start px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200 transition-colors flex items-center space-x-2"
+                        >
+                          <Mic className="w-4 h-4" />
+                          <span>Bắt đầu đọc lại</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={stopPractice}
+                          className="self-start px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors flex items-center space-x-2 animate-pulse"
+                        >
+                          <StopCircle className="w-4 h-4" />
+                          <span>Đang nghe... Dừng lại</span>
+                        </button>
+                      )}
+
+                      {practiceDetails.length > 0 && (
+                        <div className="mt-2 p-4 bg-gray-50 rounded-xl border border-gray-200 text-lg font-medium leading-relaxed flex flex-wrap gap-2">
+                          {practiceDetails.map((d, i) => (
+                            <span
+                              key={i}
+                              className={`px-2 py-1 rounded shadow-sm ${
+                                d.status === 'correct' ? 'text-green-700 bg-green-100' :
+                                'text-red-700 bg-red-100 line-through decoration-red-400'
+                              }`}
+                            >
+                              {d.word}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {practiceScore !== null && (
+                        <p className={`font-bold mt-2 ${practiceScore >= 0.8 ? 'text-green-600' : practiceScore >= 0.5 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          Độ chính xác: {(practiceScore * 100).toFixed(0)}%
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
