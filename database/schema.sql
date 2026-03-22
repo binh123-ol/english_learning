@@ -540,6 +540,7 @@ CREATE TABLE IF NOT EXISTS learning_statistics (
     lessons_completed INT NOT NULL DEFAULT 0,
     games_completed INT NOT NULL DEFAULT 0,
     conversations_completed INT NOT NULL DEFAULT 0,
+    exams_completed INT NOT NULL DEFAULT 0,
     total_time_minutes INT NOT NULL DEFAULT 0,
     xp_earned INT NOT NULL DEFAULT 0,
     streak_days INT NOT NULL DEFAULT 0,
@@ -566,4 +567,21 @@ CREATE TABLE IF NOT EXISTS user_recordings (
     INDEX idx_user_id (user_id),
     INDEX idx_recording_type (recording_type),
     INDEX idx_reference_id (reference_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
+-- 18. WRITING_EVALUATIONS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS writing_evaluations (
+    evaluation_id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    content TEXT NOT NULL,
+    topic VARCHAR(255),
+    level VARCHAR(50),
+    score DECIMAL(5,2),
+    feedback TEXT,
+    analysis_json TEXT, -- Stores segments for highlighting
+    created_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

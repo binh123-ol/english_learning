@@ -3,6 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { Send, X, Mic, Volume2, Languages, RotateCcw, StopCircle, CheckCircle2, Award } from 'lucide-react'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+function cn(...inputs) {
+  return twMerge(clsx(inputs))
+}
 
 export default function ConversationChat() {
   const { conversationId } = useParams()
@@ -302,6 +308,23 @@ export default function ConversationChat() {
     return null
   }
 
+  const extractCorrectedSentence = (feedback) => {
+    if (!feedback) return null
+    // Fallback-friendly regex to match variations of "**Câu mẫu đúng (Corrected version)**:"
+    const match = feedback.match(/\*\*Câu mẫu đúng(?:\s*\(Corrected\s*version\))?\*\*:\s*([^\n]+)/i)
+    if (match && match[1]) {
+      return match[1].trim().replace(/^["']|["']$/g, '') // Remove quotes
+    }
+    return null
+  }
+
+  // Clear practice results when AI feedback changes
+  useEffect(() => {
+    setPracticeTranscript('')
+    setPracticeDetails([])
+    setPracticeScore(null)
+  }, [aiReviewFeedback])
+
   const handleEndConversation = async () => {
     if (!confirm('Are you sure you want to end this conversation and see your evaluation?')) return
 
@@ -520,56 +543,72 @@ export default function ConversationChat() {
                       </div>
                     </div>
                     
-                    <p className="text-sm text-gray-600 mb-4">
-                      Hãy đọc lại câu bạn vừa nói để hệ thống chấm điểm phát âm từng từ nhé:
-                      <br/>
-                      <strong className="text-gray-900 text-lg mt-1 block">"{transcript}"</strong>
-                    </p>
+                    {(() => {
+                      const corrected = extractCorrectedSentence(aiReviewFeedback)
+                      const practiceText = corrected || transcript
+                      
+                      return (
+                        <>
+                          <p className="text-sm text-gray-600 mb-4">
+                            {corrected ? (
+                              <>AI gợi ý bạn nên nói câu chuẩn này để tự nhiên hơn:</>
+                            ) : (
+                              <>Hãy đọc lại câu bạn vừa nói để hệ thống chấm điểm phát âm từng từ nhé:</>
+                            )}
+                            <br/>
+                            <strong className="text-gray-900 text-lg mt-1 block">"{practiceText}"</strong>
+                          </p>
 
-                    <div className="flex flex-col space-y-4">
-                      {!isPracticing ? (
-                        <button
-                          onClick={() => startPracticeRecognition(transcript)}
-                          className="self-start px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200 transition-colors flex items-center space-x-2"
-                        >
-                          <Mic className="w-4 h-4" />
-                          <span>Bắt đầu đọc lại</span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={stopPractice}
-                          className="self-start px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors flex items-center space-x-2 animate-pulse"
-                        >
-                          <StopCircle className="w-4 h-4" />
-                          <span>Đang nghe... Dừng lại</span>
-                        </button>
-                      )}
+                          <div className="flex flex-col space-y-4">
+                            {!isPracticing ? (
+                              <button
+                                onClick={() => startPracticeRecognition(practiceText)}
+                                className={cn(
+                                  "self-start px-4 py-2 font-semibold rounded-lg transition-all flex items-center space-x-2",
+                                  practiceScore !== null ? "bg-primary-100 text-primary-700 hover:bg-primary-200" : "bg-green-100 text-green-700 hover:bg-green-200"
+                                )}
+                              >
+                                {practiceScore !== null ? <RotateCcw className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                                <span>{practiceScore !== null ? 'Thử lại lần nữa' : 'Bắt đầu đọc lại'}</span>
+                              </button>
+                            ) : (
+                              <button
+                                onClick={stopPractice}
+                                className="self-start px-4 py-2 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors flex items-center space-x-2 animate-pulse"
+                              >
+                                <StopCircle className="w-4 h-4" />
+                                <span>Đang nghe... Dừng lại</span>
+                              </button>
+                            )}
 
-                      {practiceDetails.length > 0 && (
-                        <div className="mt-2 p-4 bg-gray-50 rounded-xl border border-gray-200 text-lg font-medium leading-relaxed flex flex-wrap gap-2">
-                          {practiceDetails.map((d, i) => (
-                            <span
-                              key={i}
-                              className={`px-2 py-1 rounded shadow-sm ${
-                                d.status === 'correct' ? 'text-green-700 bg-green-100' :
-                                'text-red-700 bg-red-100 line-through decoration-red-400'
-                              }`}
-                            >
-                              {d.word}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      {practiceScore !== null && (
-                        <p className={`font-bold mt-2 ${practiceScore >= 0.8 ? 'text-green-600' : practiceScore >= 0.5 ? 'text-yellow-600' : 'text-red-600'}`}>
-                          Độ chính xác: {(practiceScore * 100).toFixed(0)}%
-                        </p>
-                      )}
-                    </div>
+                            {practiceDetails.length > 0 && (
+                              <div className="mt-2 p-4 bg-gray-50 rounded-xl border border-gray-200 text-lg font-medium leading-relaxed flex flex-wrap gap-2">
+                                {practiceDetails.map((d, i) => (
+                                  <span
+                                    key={i}
+                                    className={`px-2 py-1 rounded shadow-sm ${
+                                      d.status === 'correct' ? 'text-green-700 bg-green-100' :
+                                      'text-red-700 bg-red-100 line-through decoration-red-400'
+                                    }`}
+                                  >
+                                    {d.word}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {practiceScore !== null && (
+                              <p className={`font-bold mt-2 ${practiceScore >= 0.8 ? 'text-green-600' : practiceScore >= 0.5 ? 'text-yellow-600' : 'text-red-600'}`}>
+                                Độ chính xác: {(practiceScore * 100).toFixed(0)}%
+                              </p>
+                            )}
+                          </div>
+                        </>
+                      )
+                    })()}
                   </div>
                 )}
               </div>
-              <div className="flex space-x-3">
+              <div className="flex flex-wrap gap-3">
                 <button
                   onClick={toggleRecording}
                   className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 flex items-center justify-center space-x-2"
@@ -577,14 +616,41 @@ export default function ConversationChat() {
                   <RotateCcw className="w-5 h-5" />
                   <span>Retake</span>
                 </button>
-                <button
-                  onClick={() => handleSend(transcript)}
-                  disabled={loading}
-                  className="flex-[2] py-3 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {loading ? <span className="animate-spin text-2xl">🌀</span> : <CheckCircle2 className="w-5 h-5" />}
-                  <span>Confirm & Send to AI</span>
-                </button>
+                
+                {(() => {
+                  const corrected = extractCorrectedSentence(aiReviewFeedback)
+                  if (corrected) {
+                    return (
+                      <>
+                        <button
+                          onClick={() => handleSend(transcript)}
+                          disabled={loading}
+                          className="flex-1 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
+                        >
+                          <span>Gửi câu gốc</span>
+                        </button>
+                        <button
+                          onClick={() => handleSend(corrected)}
+                          disabled={loading}
+                          className="flex-[2] py-3 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
+                        >
+                          {loading ? <span className="animate-spin text-2xl">🌀</span> : <CheckCircle2 className="w-5 h-5" />}
+                          <span>Gửi câu đã sửa (AI)</span>
+                        </button>
+                      </>
+                    )
+                  }
+                  return (
+                    <button
+                      onClick={() => handleSend(transcript)}
+                      disabled={loading}
+                      className="flex-[2] py-3 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
+                    >
+                      {loading ? <span className="animate-spin text-2xl">🌀</span> : <CheckCircle2 className="w-5 h-5" />}
+                      <span>Confirm & Send to AI</span>
+                    </button>
+                  )
+                })()}
               </div>
             </div>
           ) : (

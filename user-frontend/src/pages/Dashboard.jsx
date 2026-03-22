@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../api/axios'
 import { useAuth } from '../context/AuthContext'
-import { BookOpen, Clock, Trophy, TrendingUp, Flame, Gamepad2, MessageCircle, Target, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
+import { BookOpen, Clock, Trophy, TrendingUp, Flame, Gamepad2, MessageCircle, PenTool, Target, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -377,14 +377,26 @@ export default function Dashboard() {
             </div>
           </Link>
           <Link
-            to="/dashboard/pronunciation-test"
+            to="/dashboard/conversations"
             className="block p-4 bg-pink-50 hover:bg-pink-100 rounded-lg transition-colors"
           >
             <div className="flex items-center space-x-3">
               <MessageCircle className="w-6 h-6 text-pink-600" />
               <div>
-                <p className="font-medium text-gray-900">Test Phát Âm</p>
-                <p className="text-sm text-gray-600">Kiểm tra và cải thiện phát âm của bạn</p>
+                <p className="font-medium text-gray-900">Luyện hội thoại AI</p>
+                <p className="text-sm text-gray-600">Thực hành giao tiếp với giáo viên bản xứ</p>
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/dashboard/writing-practice"
+            className="block p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <PenTool className="w-6 h-6 text-purple-600" />
+              <div>
+                <p className="font-medium text-gray-900">Luyện viết AI</p>
+                <p className="text-sm text-gray-600">Đánh giá và cải thiện bài viết của bạn</p>
               </div>
             </div>
           </Link>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Gamepad2, MessageCircle, FileText, BarChart3, Trophy, LogOut, Menu, X, User } from 'lucide-react';
+import { Home, BookOpen, Gamepad2, MessageCircle, FileText, PenTool, BarChart3, Trophy, LogOut, Menu, X, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navigation() {
@@ -14,6 +14,7 @@ export default function Navigation() {
     { name: 'Games', href: '/dashboard/games', icon: Gamepad2 },
     { name: 'Conversations', href: '/dashboard/conversations', icon: MessageCircle },
     { name: 'Tests', href: '/dashboard/exams', icon: FileText },
+    { name: 'Writing', href: '/dashboard/writing-practice', icon: PenTool },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Results', href: '/dashboard/results', icon: Trophy },
   ];

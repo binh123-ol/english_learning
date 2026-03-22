@@ -20,6 +20,7 @@ import PronunciationTest from './pages/PronunciationTest'
 import Account from './pages/Account'
 import LessonResult from './pages/LessonResult'
 import ExamHistory from './pages/ExamHistory'
+import WritingPractice from './pages/WritingPractice'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }) {
@@ -58,6 +59,7 @@ function App() {
             <Route path="exams/history/:sessionId" element={<ExamHistory />} />
             <Route path="results" element={<Results />} />
             <Route path="lessons/:lessonId/result" element={<LessonResult />} />
+            <Route path="writing-practice" element={<WritingPractice />} />
           </Route>
 
           <Route path="/assessment" element={<PrivateRoute><Assessment /></PrivateRoute>} />

@@ -104,9 +104,10 @@ export default function ChatBox({ isOpen, onClose }) {
             }
         } catch (error) {
             console.error('Error calling Gemini API:', error)
+            const serverMsg = error.response?.data?.message || error.response?.data?.error
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: 'Sorry, I encountered an error. Please check the console for details.'
+                content: `Sorry, I encountered an error: ${serverMsg || 'Unknown error'}. Please check the console for details.`
             }])
         } finally {
             setIsLoading(false)

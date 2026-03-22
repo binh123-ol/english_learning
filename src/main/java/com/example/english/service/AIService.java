@@ -464,12 +464,20 @@ public class AIService {
                     .block();
 
             JsonNode root = objectMapper.readTree(response);
-            return root.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+            JsonNode candidates = root.path("candidates");
+            if (candidates.isArray() && !candidates.isEmpty()) {
+                JsonNode firstCandidate = candidates.get(0);
+                return firstCandidate.path("content").path("parts").get(0).path("text").asText();
+            } else {
+                String error = "Gemini returned no candidates. Possible block or invalid prompt. Response: " + response;
+                System.err.println(error);
+                throw new RuntimeException(error);
+            }
         } catch (Exception e) {
             String errorDetail = e.getMessage();
             System.err.println("Exception in callGemini: " + errorDetail);
             e.printStackTrace();
-            return "AI Error: " + (errorDetail != null ? errorDetail : "Unknown connection error");
+            throw new RuntimeException("AI Error: " + (errorDetail != null ? errorDetail : "Unknown connection error"), e);
         }
     }
 
@@ -514,10 +522,11 @@ public class AIService {
         String prompt = "Phân tích câu nói tiếng Anh: \"" + text + "\".\n" +
                 "Các từ phát âm chưa chuẩn: " + mispronouncedInfo.toString() + "\n\n" +
                 "Yêu cầu (viết bằng tiếng Việt, cực kỳ ngắn gọn, định dạng bullet point):\n" +
-                "- Nhận xét nhanh về ngữ pháp (chỉ ghi nếu có lỗi).\n" +
-                "- Chỉ dẫn mẹo phát âm cho các từ lỗi (1 dòng/từ).\n" +
+                "- Nhận xét nhanh về ngữ pháp và từ vựng (chỉ ghi nếu có lỗi).\n" +
+                "- **Câu mẫu đúng (Corrected version)**: [Viết lại câu của người dùng cho tự nhiên và chuẩn xác nhất]\n" +
+                "- Chỉ dẫn mẹo phát âm cho 2-3 từ quan trọng nhất (1 dòng/từ).\n" +
                 "- Một câu động viên ngắn.\n\n" +
-                "Lưu ý: Không dùng bảng, không viết dài dòng.";
+                "Lưu ý: LUÔN sử dụng tiêu đề '**Câu mẫu đúng (Corrected version)**:' để bắt đầu câu đề xuất. Không dùng bảng, không viết dài dòng.";
 
         return callGemini(prompt);
     }
@@ -583,5 +592,49 @@ public class AIService {
         public String getStatus() {
             return status;
         }
+    }
+    /**
+     * Evaluate user writing using Gemini API
+     */
+    public String evaluateWriting(String text) {
+        String prompt = "You are an expert English teacher. Analyze the following student writing and provide feedback.\n" +
+                "Text: \"" + text + "\"\n\n" +
+                "Requirements:\n" +
+                "1. Identify the topic.\n" +
+                "2. Determine the English proficiency level (A1, A2, B1, B2, C1, or C2).\n" +
+                "3. Give an overall score (0.0 to 10.0).\n" +
+                "4. Provide a general feedback summary in Vietnamese.\n" +
+                "5. Breakdown the text into a list of segments. Each segment should contain:\n" +
+                "   - 'text': The original string from the text.\n" +
+                "   - 'type': 'normal', 'error' (obvious mistake), or 'improvement' (can be written better).\n" +
+                "   - 'suggestion': If type is 'error' or 'improvement', provide the corrected/better version.\n" +
+                "   - 'explanation': Why it's marked as error/improvement (in Vietnamese).\n\n" +
+                "Return the response ONLY as a JSON object with this structure:\n" +
+                "{\n" +
+                "  \"topic\": \"...\",\n" +
+                "  \"level\": \"...\",\n" +
+                "  \"score\": 0.0,\n" +
+                "  \"feedback\": \"...\",\n" +
+                "  \"segments\": [\n" +
+                "    { \"text\": \"...\", \"type\": \"...\", \"suggestion\": \"...\", \"explanation\": \"...\" },\n" +
+                "    ...\n" +
+                "  ]\n" +
+                "}\n" +
+                "Ensure every character of the original text is preserved in the combined 'text' fields of the segments.";
+
+        String aiResponse = callGemini(prompt);
+        
+        // Robust cleaning for JSON: Find first '{' and last '}'
+        try {
+            int firstBrace = aiResponse.indexOf('{');
+            int lastBrace = aiResponse.lastIndexOf('}');
+            if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+                return aiResponse.substring(firstBrace, lastBrace + 1);
+            }
+        } catch (Exception e) {
+            System.err.println("Error cleaning AI response: " + e.getMessage());
+        }
+        
+        return aiResponse.trim();
     }
 }
