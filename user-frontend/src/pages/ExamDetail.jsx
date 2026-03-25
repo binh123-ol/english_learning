@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import axios from '../api/axios'
 import { BookOpen, Clock, Award, Play, ArrowLeft } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
@@ -19,8 +19,8 @@ export default function ExamDetail() {
   const fetchExamDetails = async () => {
     try {
       const [examRes, sectionsRes] = await Promise.all([
-        axios.get(`/api/exams/${examId}`),
-        axios.get(`/api/exams/${examId}/sections`),
+        axios.get(`/exams/${examId}`),
+        axios.get(`/exams/${examId}/sections`),
       ])
       setExam(examRes.data)
       setSections(sectionsRes.data)
@@ -33,7 +33,7 @@ export default function ExamDetail() {
 
   const handleStartExam = async () => {
     try {
-      const response = await axios.post(`/api/sessions?userId=${user.userId}&examId=${examId}`)
+      const response = await axios.post(`/sessions?userId=${user.userId}&examId=${examId}`)
       navigate(`/dashboard/exams/${examId}/take`, { state: { sessionId: response.data.sessionId } })
     } catch (error) {
       console.error('Error starting exam:', error)

@@ -98,14 +98,79 @@
     @apply bg-white rounded-xl p-4 border-2 border-gray-200 transition-all duration-300 cursor-pointer hover:shadow-md;
   }
   
+  /* Answer Card Correct/Wrong states */
   .answer-card-correct {
-    @apply border-green-500 bg-green-50 shadow-lg;
-    animation: pulse-success 0.5s ease-in-out;
+    @apply border-green-500 bg-green-50;
+  }
+  .answer-card-wrong {
+    @apply border-red-500 bg-red-50;
+  }
+
+  /* Rich Text Content (Quill-like) */
+  .ql-editor {
+    @apply break-words leading-relaxed;
+    min-height: auto;
+  }
+  .ql-editor p {
+    @apply mb-0; /* Match standard paragraph behavior in Quill */
+  }
+  .ql-editor p:not(:last-child) {
+    @apply mb-3;
+  }
+  .ql-editor h1 {
+    @apply text-3xl font-bold mb-4 mt-6;
+  }
+  .ql-editor h2 {
+    @apply text-2xl font-bold mb-3 mt-5;
+  }
+  .ql-editor h3 {
+    @apply text-xl font-bold mb-2 mt-4;
+  }
+  .ql-editor ul {
+    @apply list-disc list-inside mb-4 ml-4;
+  }
+  .ql-editor ol {
+    @apply list-decimal list-inside mb-4 ml-4;
+  }
+  .ql-editor blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic my-4;
+  }
+  .ql-editor a {
+    @apply text-primary-600 underline hover:text-primary-800;
+  }
+  .ql-editor img {
+    @apply rounded-lg shadow-sm max-w-full h-auto my-4;
+  }
+  .ql-editor strong {
+    @apply font-bold;
+  }
+  .ql-editor em {
+    @apply italic;
+  }
+  .ql-editor u {
+    @apply underline;
   }
   
-  .answer-card-incorrect {
-    @apply border-red-500 bg-red-50;
-    animation: shake 0.5s ease-in-out;
+  /* Quill Alignment classes */
+  .ql-align-center {
+    text-align: center !important;
+  }
+  .ql-align-right {
+    text-align: right !important;
+  }
+  .ql-align-justify {
+    text-align: justify !important;
+  }
+
+  /* Quill Font Sizes */
+  .ql-size-small {
+    font-size: 0.75em !important;
+  }
+  .ql-size-large {
+    font-size: 1.5em !important;
+  }
+  .ql-size-huge {
+    font-size: 2.5em !important;
   }
   
   .answer-card-selected {

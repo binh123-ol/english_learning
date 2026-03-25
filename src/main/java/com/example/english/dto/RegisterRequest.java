@@ -19,6 +19,7 @@ public class RegisterRequest {
     private String password;
 
     private String levelTarget;
+    private String role;
 
     // Getters and Setters
     public String getUsername() {
@@ -51,5 +52,13 @@ public class RegisterRequest {
 
     public void setLevelTarget(String levelTarget) {
         this.levelTarget = levelTarget;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

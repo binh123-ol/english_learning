@@ -1,10 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api/axios'
 
 const AuthContext = createContext(null)
-
-// Setup axios default baseURL
-axios.defaults.baseURL = 'http://localhost:8080'
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
@@ -28,13 +25,12 @@ export const AuthProvider = ({ children }) => {
       if (parsedUser.userId) {
         localStorage.setItem('userId', parsedUser.userId)
       }
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     }
     setLoading(false)
   }, [])
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/auth/login', { email, password })
+    const response = await api.post('/auth/login', { email, password })
     const { token, ...userData } = response.data
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(userData))
@@ -45,17 +41,17 @@ export const AuthProvider = ({ children }) => {
     if (userData.roles) {
       localStorage.setItem('roles', JSON.stringify(userData.roles))
     }
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     setUser(userData)
     return response.data
   }
 
-  const register = async (username, email, password, levelTarget) => {
-    const response = await axios.post('/api/auth/register', {
+  const register = async (username, email, password, levelTarget, role) => {
+    const response = await api.post('/auth/register', {
       username,
       email,
       password,
       levelTarget,
+      role
     })
     return response.data
   }
@@ -64,7 +60,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     localStorage.removeItem('userId')
-    delete axios.defaults.headers.common['Authorization']
     setUser(null)
   }
 

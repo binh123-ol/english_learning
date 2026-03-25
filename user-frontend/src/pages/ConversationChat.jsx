@@ -131,6 +131,7 @@ export default function ConversationChat() {
       setTranscript('')
       setInterimTranscript('')
       setConfidenceDetails([])
+      setAiReviewFeedback('') // Clear previous AI feedback
       try {
         recognitionRef.current?.start()
         setIsRecording(true)

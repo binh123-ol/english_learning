@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import axios from '../api/axios'
 import { BookOpen, Clock, Award, ChevronRight } from 'lucide-react'
 
 export default function ExamList() {
@@ -14,7 +14,7 @@ export default function ExamList() {
 
   const fetchExams = async () => {
     try {
-      const response = await axios.get('/api/exams')
+      const response = await axios.get('/exams')
       setExams(response.data)
     } catch (error) {
       console.error('Error fetching exams:', error)

@@ -61,10 +61,19 @@ public class AuthService {
         user.setHashedPassword(passwordEncoder.encode(request.getPassword()));
         user.setLevelTarget(request.getLevelTarget());
         user.setCreatedAt(LocalDateTime.now());
-
         // Assign default role
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        String roleName = request.getRole() != null ? request.getRole() : "ROLE_USER";
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName.toUpperCase();
+        }
+        
+        final String finalRoleName = roleName;
+        Role userRole = roleRepository.findByName(finalRoleName).orElseGet(() -> {
+            Role newUserRole = new Role();
+            newUserRole.setName(finalRoleName);
+            return roleRepository.save(newUserRole);
+        });
+        
         user.setRoles(Collections.singleton(userRole));
 
         userRepository.save(user);

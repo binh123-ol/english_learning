@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import axios from '../api/axios'
 import { PenTool, Info, CheckCircle2, AlertCircle, Sparkles, ChevronRight, History } from 'lucide-react'
@@ -11,6 +12,7 @@ function cn(...inputs) {
 
 export default function WritingPractice() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [text, setText] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [result, setResult] = useState(null)
@@ -23,6 +25,9 @@ export default function WritingPractice() {
     try {
       const response = await axios.post(`/ai/writing/evaluate?userId=${user.userId}`, { text })
       setResult(response.data)
+      
+      // If we got an evaluationId, we could optionally redirect to the detail page
+      // But for now, showing the result on the same page is fine as per current logic
     } catch (err) {
       console.error('Error analyzing writing:', err)
       setResult(null) // Clear previous results on error
@@ -54,7 +59,10 @@ export default function WritingPractice() {
           </h1>
           <p className="text-gray-500 mt-2">Viết bài luận của bạn và nhận phản hồi tức thì từ AI giáo viên.</p>
         </div>
-        <button className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors">
+        <button 
+          onClick={() => navigate('/dashboard/writing-practice/history')}
+          className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors"
+        >
           <History className="w-5 h-5" />
           Lịch sử bài viết
         </button>

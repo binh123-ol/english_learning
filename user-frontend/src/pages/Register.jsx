@@ -10,6 +10,7 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     levelTarget: 'IELTS 7.0',
+    role: 'USER',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,7 +33,7 @@ export default function Register() {
     setLoading(true)
 
     try {
-      await register(formData.username, formData.email, formData.password, formData.levelTarget)
+      await register(formData.username, formData.email, formData.password, formData.levelTarget, formData.role)
       // After registration, automatically login and redirect to assessment
       try {
         const userData = await login(formData.email, formData.password)
@@ -128,6 +129,7 @@ export default function Register() {
                 </select>
               </div>
             </div>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -175,6 +175,9 @@ public class AIController {
             writingEvaluationRepository.save(evaluation);
             System.out.println("Evaluation saved successfully");
             
+            // Add ID to result for frontend
+            result.put("evaluationId", evaluation.getEvaluationId());
+            
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             System.err.println("Error evaluating writing: " + e.getMessage());
@@ -184,6 +187,20 @@ public class AIController {
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
+    }
+
+    @GetMapping("/writing/history/{userId}")
+    @Operation(summary = "Get writing history", description = "Get all writing evaluations for a user")
+    public ResponseEntity<List<WritingEvaluation>> getWritingHistory(@PathVariable String userId) {
+        return ResponseEntity.ok(writingEvaluationRepository.findByUser_UserIdOrderByCreatedAtDesc(userId));
+    }
+
+    @GetMapping("/writing/{evaluationId}")
+    @Operation(summary = "Get writing evaluation detail", description = "Get full detail of a specific writing evaluation")
+    public ResponseEntity<WritingEvaluation> getWritingDetail(@PathVariable String evaluationId) {
+        return writingEvaluationRepository.findById(evaluationId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // Inner classes for request bodies

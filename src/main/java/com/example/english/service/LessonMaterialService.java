@@ -8,7 +8,9 @@ import com.example.english.repository.SubLessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +34,7 @@ public class LessonMaterialService {
     }
 
     @Transactional
-    public LessonMaterial createMaterial(String subLessonId, LessonMaterial material) {
+    public LessonMaterial createMaterial(String subLessonId, LessonMaterial material, MultipartFile file) throws IOException {
         SubLesson subLesson = subLessonRepository.findById(subLessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("SubLesson", "id", subLessonId));
 
@@ -40,17 +42,36 @@ public class LessonMaterialService {
         material.setSubLesson(subLesson);
         material.setCreatedAt(LocalDateTime.now());
 
+        if (file != null && !file.isEmpty()) {
+            material.setFileContent(file.getBytes());
+            material.setFileName(file.getOriginalFilename());
+            material.setContentType(file.getContentType());
+            // Optionally set fileUrl for static serving if needed, 
+            // but since we want to store in DB, we'll provide a separate download URL
+            material.setFileUrl("/api/sub-lessons/materials/" + material.getMaterialId() + "/content");
+        }
+
         return materialRepository.save(material);
     }
 
     @Transactional
-    public LessonMaterial updateMaterial(String materialId, LessonMaterial material) {
+    public LessonMaterial updateMaterial(String materialId, LessonMaterial material, MultipartFile file) throws IOException {
         LessonMaterial existing = getMaterialById(materialId);
         existing.setMaterialType(material.getMaterialType());
         existing.setTitle(material.getTitle());
         existing.setContent(material.getContent());
-        existing.setFileUrl(material.getFileUrl());
         existing.setOrderIndex(material.getOrderIndex());
+
+        if (file != null && !file.isEmpty()) {
+            existing.setFileContent(file.getBytes());
+            existing.setFileName(file.getOriginalFilename());
+            existing.setContentType(file.getContentType());
+            existing.setFileUrl("/api/sub-lessons/materials/" + materialId + "/content");
+        } else if (material.getFileUrl() != null) {
+            // Keep existing URL if provided
+            existing.setFileUrl(material.getFileUrl());
+        }
+
         return materialRepository.save(existing);
     }
 

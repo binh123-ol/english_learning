@@ -46,7 +46,7 @@ export default function Layout() {
                 
                 {user?.roles?.includes('ROLE_ADMIN') && (
                   <a 
-                    href="http://localhost:5174" 
+                    href="http://localhost:3001" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="ml-2 flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-bold text-purple-600 hover:text-purple-700 hover:bg-purple-50 transition-all duration-200 border border-transparent hover:border-purple-100"

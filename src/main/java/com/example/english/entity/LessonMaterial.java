@@ -1,13 +1,14 @@
 package com.example.english.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lesson_materials")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
 public class LessonMaterial {
     @Id
     @Column(name = "material_id")
@@ -15,6 +16,7 @@ public class LessonMaterial {
 
     @ManyToOne
     @JoinColumn(name = "sub_lesson_id", nullable = false)
+    @JsonIgnoreProperties({"lesson", "isActive", "createdAt", "orderIndex", "content"})
     private SubLesson subLesson;
 
     @Column(name = "material_type", nullable = false)
@@ -28,6 +30,17 @@ public class LessonMaterial {
 
     @Column(name = "file_url", length = 500)
     private String fileUrl;
+
+    @Lob
+    @JsonIgnore
+    @Column(name = "file_content", columnDefinition = "LONGBLOB")
+    private byte[] fileContent;
+
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "content_type")
+    private String contentType;
 
     @Column(name = "order_index", nullable = false)
     private Integer orderIndex;
@@ -83,6 +96,31 @@ public class LessonMaterial {
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    @JsonIgnore
+    public byte[] getFileContent() {
+        return fileContent;
+    }
+
+    public void setFileContent(byte[] fileContent) {
+        this.fileContent = fileContent;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public Integer getOrderIndex() {

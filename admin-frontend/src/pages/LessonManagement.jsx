@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
-import { BookOpen, Plus, Edit, Trash2, Eye, FileText, Video, Music, Image, File, ChevronRight, ChevronDown } from 'lucide-react'
+import { BookOpen, Plus, Edit, Trash2, Eye, FileText, Video, Music, Image, File, ChevronRight, ChevronDown, Upload } from 'lucide-react'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 export default function LessonManagement() {
   const [lessons, setLessons] = useState([])
@@ -13,6 +15,8 @@ export default function LessonManagement() {
   const [showContentModal, setShowContentModal] = useState(false)
   const [showMaterialForm, setShowMaterialForm] = useState(false)
   const [showExerciseForm, setShowExerciseForm] = useState(false)
+  const [showEditorModal, setShowEditorModal] = useState(false)
+  const [editorTempContent, setEditorTempContent] = useState('')
   const [selectedSubLesson, setSelectedSubLesson] = useState(null)
   const [materials, setMaterials] = useState([])
   const [exercises, setExercises] = useState([])
@@ -233,21 +237,59 @@ export default function LessonManagement() {
   const [editingMaterial, setEditingMaterial] = useState(null)
   const [editingExercise, setEditingExercise] = useState(null)
 
+  const stripHtml = (html) => {
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'color': [] }, { 'background': [] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
   const handleCreateMaterial = async (e) => {
     e.preventDefault()
+
+    const formData = new FormData()
+    
+    // Create the material object without the file property
+    const { file, ...materialData } = materialFormData
+    
+    // Append the material data as a JSON string
+    formData.append('material', JSON.stringify(materialData))
+
+    // Append the file if it exists
+    if (file) {
+      formData.append('file', file)
+    }
+
     try {
-      if (editingMaterial) {
-        await api.put(`/sub-lessons/materials/${editingMaterial.materialId}`, materialFormData)
-      } else {
-        await api.post(`/sub-lessons/${selectedSubLesson.subLessonId}/materials`, materialFormData)
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       }
+
+      if (editingMaterial) {
+        await api.put(`/sub-lessons/materials/${editingMaterial.materialId}`, formData, config)
+      } else {
+        await api.post(`/sub-lessons/${selectedSubLesson.subLessonId}/materials`, formData, config)
+      }
+      
       await fetchMaterials(selectedSubLesson.subLessonId)
       setMaterialFormData({ materialType: 'TEXT', title: '', content: '', fileUrl: '', orderIndex: materials.length + 1 })
       setEditingMaterial(null)
       setShowMaterialForm(false)
     } catch (error) {
       console.error('Error saving material:', error)
-      alert('Error saving material')
+      alert('Error saving material. ' + (error.response?.data?.message || ''))
     }
   }
 
@@ -430,6 +472,7 @@ export default function LessonManagement() {
   }
 
   return (
+    <>
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
@@ -778,101 +821,193 @@ export default function LessonManagement() {
                       Materials
                     </h3>
                     <button
-                      onClick={() => setShowMaterialForm(!showMaterialForm)}
-                      className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                      onClick={() => {
+                        setEditingMaterial(null)
+                        setMaterialFormData({ materialType: 'TEXT', title: '', content: '', fileUrl: '', orderIndex: materials.length + 1 })
+                        setShowMaterialForm(true)
+                      }}
+                      className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 flex items-center gap-1"
                     >
-                      {showMaterialForm ? 'Cancel' : '+ Add Material'}
+                      <Plus className="w-4 h-4" />
+                      Add Material
                     </button>
                   </div>
 
                   {showMaterialForm && (
-                    <form onSubmit={handleCreateMaterial} className="mb-4 p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold mb-3">{editingMaterial ? 'Edit Material' : 'Add New Material'}</h4>
-                      <div className="space-y-3">
-                        <select
-                          value={materialFormData.materialType}
-                          onChange={(e) => setMaterialFormData({ ...materialFormData, materialType: e.target.value })}
-                          className="w-full px-4 py-2 border rounded-lg"
-                          required
-                        >
-                          <option value="TEXT">Text</option>
-                          <option value="VIDEO">Video</option>
-                          <option value="AUDIO">Audio</option>
-                          <option value="PDF">PDF</option>
-                          <option value="IMAGE">Image</option>
-                        </select>
-                        <input
-                          type="text"
-                          placeholder="Title"
-                          value={materialFormData.title}
-                          onChange={(e) => setMaterialFormData({ ...materialFormData, title: e.target.value })}
-                          className="w-full px-4 py-2 border rounded-lg"
-                          required
-                        />
-                        <textarea
-                          placeholder="Content"
-                          value={materialFormData.content}
-                          onChange={(e) => setMaterialFormData({ ...materialFormData, content: e.target.value })}
-                          className="w-full px-4 py-2 border rounded-lg"
-                          rows="3"
-                        />
-                        <input
-                          type="text"
-                          placeholder="File URL (optional)"
-                          value={materialFormData.fileUrl}
-                          onChange={(e) => setMaterialFormData({ ...materialFormData, fileUrl: e.target.value })}
-                          className="w-full px-4 py-2 border rounded-lg"
-                        />
-
-                        {/* Video Preview in Form */}
-                        {materialFormData.materialType === 'VIDEO' && materialFormData.fileUrl && (
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-600 mb-1">Preview:</p>
-                            <iframe
-                              src={(() => {
-                                const url = materialFormData.fileUrl;
-                                if (url.includes('youtube.com/watch?v=')) {
-                                  return url.replace('watch?v=', 'embed/');
-                                } else if (url.includes('youtu.be/')) {
-                                  return url.replace('youtu.be/', 'www.youtube.com/embed/');
-                                }
-                                return url;
-                              })()}
-                              className="w-full h-48 rounded-lg border"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex space-x-2">
-                          <input
-                            type="number"
-                            placeholder="Order Index"
-                            value={materialFormData.orderIndex}
-                            onChange={(e) => setMaterialFormData({ ...materialFormData, orderIndex: parseInt(e.target.value) })}
-                            className="w-full px-4 py-2 border rounded-lg"
-                            min="1"
-                          />
-                          <button type="submit" className="btn btn-primary">
-                            {editingMaterial ? 'Update' : 'Add'}
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
+                      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+                          <h4 className="font-bold text-xl text-gray-800 flex items-center gap-2">
+                            <FileText className="w-6 h-6 text-blue-600" />
+                            {editingMaterial ? 'Edit Material' : 'Create New Material'}
+                          </h4>
+                          <button 
+                            onClick={() => setShowMaterialForm(false)}
+                            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                          >
+                            <Plus className="w-6 h-6 transform rotate-45 text-gray-500" />
                           </button>
-                          {editingMaterial && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEditingMaterial(null)
-                                setMaterialFormData({ materialType: 'TEXT', title: '', content: '', fileUrl: '', orderIndex: materials.length + 1 })
-                                setShowMaterialForm(false)
-                              }}
-                              className="btn bg-gray-300 hover:bg-gray-400 text-gray-800"
-                            >
-                              Cancel
-                            </button>
+                        </div>
+
+                        <form onSubmit={handleCreateMaterial} className="flex-1 overflow-y-auto p-6 space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Material Type</label>
+                              <select
+                                value={materialFormData.materialType}
+                                onChange={(e) => setMaterialFormData({ ...materialFormData, materialType: e.target.value })}
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 outline-none transition-all"
+                                required
+                              >
+                                <option value="TEXT">Text Content</option>
+                                <option value="VIDEO">Video Lesson</option>
+                                <option value="AUDIO">Audio File</option>
+                                <option value="PDF">PDF Document</option>
+                                <option value="IMAGE">Image / Diagram</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Display Order</label>
+                              <input
+                                type="number"
+                                value={materialFormData.orderIndex}
+                                onChange={(e) => setMaterialFormData({ ...materialFormData, orderIndex: parseInt(e.target.value) })}
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-0 outline-none transition-all"
+                                min="1"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">
+                              Material Title
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="E.G. GRAMMAR BASICS: PRESENT SIMPLE"
+                              value={materialFormData.title}
+                              onChange={(e) => setMaterialFormData({ ...materialFormData, title: e.target.value })}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl font-bold uppercase focus:border-blue-500 focus:ring-0 outline-none transition-all"
+                              required
+                            />
+                            <p className="mt-1 text-xs text-gray-400 italic">* Title will be automatically displayed in BOLD and UPPERCASE for students.</p>
+                          </div>
+
+                          {materialFormData.materialType !== 'TEXT' && (
+                            <div className="p-5 bg-blue-50 border-2 border-blue-100 rounded-xl space-y-4">
+                              <label className="block text-sm font-bold text-blue-800 uppercase tracking-wider">File & Media</label>
+                              <div className="flex items-center space-x-4">
+                                <label className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl cursor-pointer hover:bg-blue-700 transition-all shadow-md active:transform active:scale-95">
+                                  <Upload className="w-5 h-4 mr-2" />
+                                  <span className="font-bold">UPLOAD FILE</span>
+                                  <input
+                                    type="file"
+                                    onChange={(e) => setMaterialFormData({ ...materialFormData, file: e.target.files[0] })}
+                                    className="hidden"
+                                  />
+                                </label>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-blue-900 truncate">
+                                    {materialFormData.file ? materialFormData.file.name : (materialFormData.fileUrl ? 'Existing file attached' : 'No file chosen')}
+                                  </p>
+                                  {materialFormData.file && <p className="text-xs text-blue-600">{(materialFormData.file.size / 1024 / 1024).toFixed(2)} MB</p>}
+                                </div>
+                              </div>
+                              <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                  <span className="text-gray-400 text-sm font-bold">URL:</span>
+                                </div>
+                                <input
+                                  type="text"
+                                  placeholder="https://example.com/media-file.mp4"
+                                  value={materialFormData.fileUrl}
+                                  onChange={(e) => setMaterialFormData({ ...materialFormData, fileUrl: e.target.value })}
+                                  className="w-full pl-12 pr-4 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 outline-none transition-all"
+                                />
+                              </div>
+                            </div>
                           )}
+
+                          <div className="flex-1 flex flex-col min-h-[300px]">
+                            <div className="flex justify-between items-center mb-2">
+                              <label className="block text-sm font-bold text-gray-700 uppercase tracking-wider">
+                                Detailed Content / Description
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditorTempContent(materialFormData.content || '')
+                                  setShowEditorModal(true)
+                                }}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 border border-blue-200 transition-all font-bold text-xs"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                FULL SCREEN EDITOR
+                              </button>
+                            </div>
+                            <div 
+                              onClick={() => {
+                                setEditorTempContent(materialFormData.content || '')
+                                setShowEditorModal(true)
+                              }}
+                              className="flex-1 bg-white border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 transition-all overflow-y-auto max-h-[200px]"
+                            >
+                              {materialFormData.content ? (
+                                <div className="prose prose-sm max-w-none ql-editor" dangerouslySetInnerHTML={{ __html: materialFormData.content }} />
+                              ) : (
+                                <div className="flex items-center justify-center h-full text-gray-400 italic">
+                                  Click to open editor and write content...
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {materialFormData.materialType === 'VIDEO' && materialFormData.fileUrl && (
+                            <div className="mt-4 p-4 bg-gray-900 rounded-xl">
+                              <p className="text-xs text-gray-400 mb-3 font-bold uppercase tracking-widest">Live Preview</p>
+                              <div className="aspect-video w-full rounded-lg overflow-hidden shadow-2xl">
+                                <iframe
+                                  src={(() => {
+                                    const url = materialFormData.fileUrl;
+                                    if (url.includes('youtube.com/watch?v=')) {
+                                      return url.replace('watch?v=', 'embed/');
+                                    } else if (url.includes('youtu.be/')) {
+                                      return url.replace('youtu.be/', 'www.youtube.com/embed/');
+                                    }
+                                    return url;
+                                  })()}
+                                  className="w-full h-full"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </form>
+
+                        <div className="p-4 border-t bg-gray-50 flex gap-4">
+                          <button
+                            onClick={handleCreateMaterial}
+                            className="flex-1 bg-green-600 text-white py-4 rounded-xl hover:bg-green-700 font-black text-lg transition-all shadow-lg active:transform active:scale-95 flex items-center justify-center gap-2"
+                          >
+                            <Plus className="w-6 h-6" />
+                            {editingMaterial ? 'UPDATE MATERIAL' : 'CREATE MATERIAL'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingMaterial(null)
+                              setMaterialFormData({ materialType: 'TEXT', title: '', content: '', fileUrl: '', orderIndex: materials.length + 1 })
+                              setShowMaterialForm(false)
+                            }}
+                            className="px-8 py-4 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-bold transition-all"
+                          >
+                            CANCEL
+                          </button>
                         </div>
                       </div>
-                    </form>
+                    </div>
                   )}
 
                   <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -886,11 +1021,13 @@ export default function LessonManagement() {
                               {material.materialType === 'IMAGE' && <Image className="w-4 h-4 text-green-500" />}
                               {material.materialType === 'PDF' && <File className="w-4 h-4 text-purple-500" />}
                               {material.materialType === 'TEXT' && <FileText className="w-4 h-4 text-gray-500" />}
-                              <span className="font-semibold">{material.title || 'Untitled'}</span>
-                              <span className="text-xs text-gray-500">({material.materialType || 'N/A'})</span>
+                              <span className="font-bold uppercase text-gray-800">{material.title || 'Untitled'}</span>
+                              <span className="text-[10px] bg-gray-200 px-1 rounded text-gray-600 uppercase font-bold tracking-tight">
+                                {material.materialType || 'N/A'}
+                              </span>
                             </div>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {material.content ? material.content.substring(0, 50) + '...' : 'No content'}
+                            <p className="text-xs text-gray-500 mt-1 line-clamp-1 italic">
+                              {material.content ? stripHtml(material.content).substring(0, 100) + '...' : 'No content'}
                             </p>
 
                             {/* Video Preview in List */}
@@ -1148,6 +1285,107 @@ export default function LessonManagement() {
         </div>
       )}
     </div>
+
+    {/* DEDICATED FULL SCREEN CONTENT EDITOR (WORD-LIKE) */}
+    {showEditorModal && (
+      <div className="fixed inset-0 bg-white z-[100] flex flex-col animate-in fade-in zoom-in duration-200">
+        {/* Editor Header */}
+        <div className="bg-gray-800 text-white p-4 flex justify-between items-center shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black uppercase tracking-tighter text-white">Content Editor</h2>
+              <p className="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Microsoft Word Mode</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowEditorModal(false)}
+              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-bold transition-all text-sm"
+            >
+              DISCARD CHANGES
+            </button>
+            <button
+              onClick={() => {
+                setMaterialFormData({ ...materialFormData, content: editorTempContent })
+                setShowEditorModal(false)
+              }}
+              className="px-8 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black transition-all shadow-lg active:transform active:scale-95 text-sm"
+            >
+              APPLY TO MATERIAL
+            </button>
+          </div>
+        </div>
+
+        {/* Editor Workspace */}
+        <div className="flex-1 bg-gray-200 overflow-y-auto p-8 flex justify-center">
+          {/* The "Paper" */}
+          <div className="bg-white w-full max-w-4xl shadow-2xl min-h-[1056px] p-12 flex flex-col border border-gray-300">
+            <div className="mb-8 border-b-2 border-gray-100 pb-4">
+              <h1 className="text-gray-300 text-4xl font-black uppercase pointer-events-none select-none">
+                {materialFormData.title || 'Untitled Document'}
+              </h1>
+            </div>
+            
+            <div className="flex-1">
+              <ReactQuill
+                theme="snow"
+                modules={{
+                  toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'font': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image', 'video'],
+                    ['clean'],
+                    ['blockquote', 'code-block']
+                  ],
+                }}
+                value={editorTempContent}
+                onChange={setEditorTempContent}
+                className="h-full min-h-[800px] quill-word-editor"
+                placeholder="Start typing your amazing lesson content here..."
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Editor Footer Status Bar */}
+        <div className="bg-gray-100 border-t p-2 px-6 flex justify-between items-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+          <div className="flex gap-4">
+            <span>Status: Editing</span>
+            <span>Mode: Rich Text (HTML)</span>
+          </div>
+          <div>
+            <span>English Learning Platform Admin v1.0</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <style>{`
+      .quill-word-editor .ql-container {
+        font-size: 16px;
+        border: none !important;
+      }
+      .quill-word-editor .ql-toolbar {
+        border: none !important;
+        border-bottom: 2px solid #f3f4f6 !important;
+        padding: 12px !important;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+      }
+      .quill-word-editor .ql-editor {
+        min-height: 800px;
+        padding: 0 !important;
+      }
+    `}</style>
+  </>
   )
 }
-

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from '../api/axios'
 import { useAuth } from '../context/AuthContext'
-import { BookOpen, Clock, CheckCircle, Play } from 'lucide-react'
+import { BookOpen, Clock, CheckCircle, Play, Video, Music, FileText, File, Image } from 'lucide-react'
 
 export default function LessonDetail() {
   const { lessonId } = useParams()
@@ -290,34 +290,49 @@ export default function LessonDetail() {
       <div className="card">
         <div className="prose max-w-none">
           {lesson.content && (
-            <div dangerouslySetInnerHTML={{ __html: lesson.content }} className="mb-8" />
+            <div className="ql-snow mb-8">
+              <div 
+                className="ql-editor p-0" 
+                dangerouslySetInnerHTML={{ __html: lesson.content }} 
+              />
+            </div>
           )}
 
           {subLessons && subLessons.length > 0 ? (
-            <div className="space-y-8">
+            <div className="space-y-12">
               {subLessons.map((subLesson) => (
-                <div key={subLesson?.subLessonId || Math.random()} className="border-t pt-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">{subLesson?.title || 'Untitled'}</h2>
+                <div key={subLesson?.subLessonId || Math.random()} className="border-t pt-8">
+                  <h2 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tight">{subLesson?.title || 'Untitled'}</h2>
                   {subLesson?.content && (
-                    <div className="text-gray-700 mb-4">{subLesson.content}</div>
+                    <div className="ql-snow mb-6">
+                      <div 
+                        className="ql-editor p-0 text-gray-600 text-lg font-medium"
+                        dangerouslySetInnerHTML={{ __html: subLesson.content }}
+                      />
+                    </div>
                   )}
 
-                  <div className="space-y-6">
+                  <div className="space-y-8">
                     {/* Materials */}
                     {subLessonMaterials[subLesson?.subLessonId] && Array.isArray(subLessonMaterials[subLesson.subLessonId]) && subLessonMaterials[subLesson.subLessonId].map((material) => (
-                      <div key={material.materialId} className="bg-gray-50 rounded-lg p-4">
-                        <div className="flex items-center gap-2 mb-2 font-semibold">
-                          {material.materialType === 'VIDEO' && <span className="text-red-500">📺 Video</span>}
-                          {material.materialType === 'AUDIO' && <span className="text-blue-500">🎧 Audio</span>}
-                          {material.materialType === 'TEXT' && <span className="text-gray-500">📄 Reading</span>}
-                          {material.materialType === 'PDF' && <span className="text-purple-500">📑 PDF</span>}
-                          {material.materialType === 'IMAGE' && <span className="text-green-500">🖼️ Image</span>}
-                          <span>{material.title}</span>
+                      <div key={material.materialId} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3 mb-4 border-b pb-3 border-gray-50">
+                          <div className="p-2 bg-gray-50 rounded-lg">
+                            {material.materialType === 'VIDEO' && <Video className="w-5 h-5 text-red-500" />}
+                            {material.materialType === 'AUDIO' && <Music className="w-5 h-5 text-blue-500" />}
+                            {material.materialType === 'TEXT' && <FileText className="w-5 h-5 text-emerald-500" />}
+                            {material.materialType === 'PDF' && <File className="w-5 h-5 text-purple-500" />}
+                            {material.materialType === 'IMAGE' && <Image className="w-5 h-5 text-orange-500" />}
+                          </div>
+                          <span className="font-black text-gray-800 uppercase tracking-wider">{material.title}</span>
                         </div>
 
                         {material.content && (
-                          <div className="prose max-w-none text-sm mb-3">
-                            {material.content}
+                          <div className="ql-snow mb-4">
+                            <div 
+                              className="ql-editor p-4 bg-gray-50/50 rounded-xl border border-gray-100 text-gray-700"
+                              dangerouslySetInnerHTML={{ __html: material.content }}
+                            />
                           </div>
                         )}
 
@@ -379,118 +394,83 @@ export default function LessonDetail() {
 
                     {/* Exercises */}
                     {isExercisesUnlocked && subLessonExercises[subLesson?.subLessonId] && Array.isArray(subLessonExercises[subLesson.subLessonId]) && subLessonExercises[subLesson.subLessonId].length > 0 && (
-                      <div className="mt-8 space-y-6">
-                        <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Exercises</h3>
-                        {subLessonExercises[subLesson.subLessonId].map((exercise, index) => (
-                          <div key={exercise.exerciseId} className="bg-white border rounded-xl p-5 shadow-sm">
-                            <div className="flex items-start gap-3 mb-4">
-                              <span className="flex-shrink-0 w-7 h-7 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold text-sm">
-                                {index + 1}
-                              </span>
-                              <div className="flex-1">
-                                <h4 className="font-bold text-gray-900">{exercise.title}</h4>
-                                <p className="text-gray-700 mt-1">{exercise.questionText}</p>
-                                {exercise.exerciseType && (
-                                  <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">
-                                    {exercise.exerciseType.replace('_', ' ')}
-                                  </span>
-                                )}
+                      <div className="mt-12 space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex items-center gap-3 border-b pb-4 border-gray-100">
+                          <div className="p-2 bg-primary-100 rounded-xl">
+                            <BookOpen className="w-6 h-6 text-primary-600" />
+                          </div>
+                          <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Practice Exercises</h3>
+                        </div>
+                        
+                        <div className="grid gap-6">
+                          {subLessonExercises[subLesson.subLessonId].map((exercise, index) => (
+                            <div key={exercise.exerciseId} className="bg-white border-2 border-gray-50 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
+                              <div className="flex items-start gap-6">
+                                <span className="flex-shrink-0 w-10 h-10 bg-primary-600 text-white rounded-2xl flex items-center justify-center font-black text-lg shadow-lg shadow-primary-200">
+                                  {index + 1}
+                                </span>
+                                <div className="flex-1 space-y-2">
+                                  <div className="flex items-center gap-3">
+                                    <h4 className="font-black text-gray-900 text-xl uppercase tracking-tight">{exercise.title}</h4>
+                                    {exercise.exerciseType && (
+                                      <span className="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-500 rounded uppercase tracking-widest">
+                                        {exercise.exerciseType.replace('_', ' ')}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-gray-600 text-lg font-medium leading-relaxed">{exercise.questionText}</p>
+                                </div>
                               </div>
-                            </div>
 
-                            <div className="ml-10">
-                              {/* MULTIPLE CHOICE */}
-                              {exercise.exerciseType === 'MULTIPLE_CHOICE' && exercise.options && (
-                                <div className="grid gap-3">
-                                  {exercise.options.map((option) => (
-                                    <button
-                                      key={option.optionId}
-                                      onClick={() => handleAnswerSelect(exercise.exerciseId, option.optionId, option.isCorrect)}
-                                      className={`text-left p-4 rounded-xl border-2 transition-all ${userAnswers[exercise.exerciseId]?.optionId === option.optionId
-                                        ? 'border-blue-500 bg-blue-50 shadow-md'
-                                        : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <span className="font-medium">{option.optionText}</span>
-                                      </div>
-                                    </button>
-                                  ))}
-                                </div>
-                              )}
-
-                              {/* FILL IN THE BLANK */}
-                              {exercise.exerciseType === 'FILL_BLANK' && (
-                                <div className="space-y-3">
-                                  <input
-                                    type="text"
-                                    value={userAnswers[exercise.exerciseId]?.answer || ''}
-                                    onChange={(e) => {
-                                      const userInput = e.target.value.trim().toLowerCase()
-                                      const correctAnswer = exercise.correctAnswer?.trim().toLowerCase()
-                                      handleAnswerSelect(exercise.exerciseId, null, userInput === correctAnswer, e.target.value)
-                                    }}
-                                    placeholder="Type your answer here..."
-                                    className={`w-full p-4 rounded-xl border-2 transition-all ${userAnswers[exercise.exerciseId]?.answer
-                                      ? 'border-blue-500 bg-blue-50'
-                                      : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                                      }`}
-                                  />
-                                </div>
-                              )}
-
-                              {/* TEXT INPUT */}
-                              {exercise.exerciseType === 'TEXT_INPUT' && (
-                                <div className="space-y-3">
-                                  <textarea
-                                    value={userAnswers[exercise.exerciseId]?.answer || ''}
-                                    onChange={(e) => {
-                                      const userInput = e.target.value.trim().toLowerCase()
-                                      const correctAnswer = exercise.correctAnswer?.trim().toLowerCase()
-                                      handleAnswerSelect(exercise.exerciseId, null, userInput === correctAnswer, e.target.value)
-                                    }}
-                                    placeholder="Type your answer here..."
-                                    rows={4}
-                                    className={`w-full p-4 rounded-xl border-2 transition-all resize-none ${userAnswers[exercise.exerciseId]?.answer
-                                      ? 'border-blue-500 bg-blue-50'
-                                      : 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
-                                      }`}
-                                  />
-                                </div>
-                              )}
-
-                              {/* MATCHING */}
-                              {exercise.exerciseType === 'MATCHING' && exercise.options && (
-                                <div className="space-y-3">
-                                  <p className="text-sm text-gray-600 mb-3">Match the items by selecting the correct pairs</p>
-                                  <div className="grid gap-3">
+                              <div className="mt-8 ml-16">
+                                {/* MULTIPLE CHOICE */}
+                                {exercise.exerciseType === 'MULTIPLE_CHOICE' && exercise.options && (
+                                  <div className="grid gap-4">
                                     {exercise.options.map((option) => (
                                       <button
                                         key={option.optionId}
                                         onClick={() => handleAnswerSelect(exercise.exerciseId, option.optionId, option.isCorrect)}
-                                        className={`text-left p-4 rounded-xl border-2 transition-all ${userAnswers[exercise.exerciseId]?.optionId === option.optionId
-                                          ? 'border-blue-500 bg-blue-50 shadow-md'
-                                          : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
+                                        className={`text-left p-5 rounded-2xl border-2 transition-all group relative overflow-hidden ${userAnswers[exercise.exerciseId]?.optionId === option.optionId
+                                          ? 'border-primary-500 bg-primary-50 shadow-md translate-x-1'
+                                          : 'border-gray-50 hover:border-primary-200 hover:bg-gray-50 hover:translate-x-1'
                                           }`}
                                       >
-                                        <div className="flex items-center justify-between">
-                                          <span className="font-medium">{option.optionText}</span>
+                                        <div className="flex items-center justify-between relative z-10">
+                                          <span className={`font-bold text-lg ${userAnswers[exercise.exerciseId]?.optionId === option.optionId ? 'text-primary-700' : 'text-gray-700'}`}>
+                                            {option.optionText}
+                                          </span>
+                                          {userAnswers[exercise.exerciseId]?.optionId === option.optionId && (
+                                            <CheckCircle className="w-6 h-6 text-primary-600 animate-in zoom-in duration-300" />
+                                          )}
                                         </div>
                                       </button>
                                     ))}
                                   </div>
-                                </div>
-                              )}
+                                )}
 
-                              {/* Fallback for unknown exercise types */}
-                              {!['MULTIPLE_CHOICE', 'FILL_BLANK', 'TEXT_INPUT', 'MATCHING'].includes(exercise.exerciseType) && (
-                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                  <p className="text-yellow-800">⚠️ Unsupported exercise type: {exercise.exerciseType}</p>
-                                </div>
-                              )}
+                                {/* FILL IN THE BLANK */}
+                                {exercise.exerciseType === 'FILL_BLANK' && (
+                                  <div className="max-w-md">
+                                    <input
+                                      type="text"
+                                      value={userAnswers[exercise.exerciseId]?.answer || ''}
+                                      onChange={(e) => {
+                                        const userInput = e.target.value.trim().toLowerCase()
+                                        const correctAnswer = exercise.correctAnswer?.trim().toLowerCase()
+                                        handleAnswerSelect(exercise.exerciseId, null, userInput === correctAnswer, e.target.value)
+                                      }}
+                                      placeholder="Type your answer here..."
+                                      className={`w-full p-5 rounded-2xl border-2 transition-all text-lg font-bold ${userAnswers[exercise.exerciseId]?.answer
+                                        ? 'border-primary-500 bg-primary-50 text-primary-900'
+                                        : 'border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none'
+                                        }`}
+                                    />
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     )}
 

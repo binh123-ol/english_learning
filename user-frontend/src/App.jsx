@@ -21,6 +21,8 @@ import Account from './pages/Account'
 import LessonResult from './pages/LessonResult'
 import ExamHistory from './pages/ExamHistory'
 import WritingPractice from './pages/WritingPractice'
+import WritingHistory from './pages/WritingHistory'
+import WritingDetail from './pages/WritingDetail'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }) {
@@ -60,6 +62,8 @@ function App() {
             <Route path="results" element={<Results />} />
             <Route path="lessons/:lessonId/result" element={<LessonResult />} />
             <Route path="writing-practice" element={<WritingPractice />} />
+            <Route path="writing-practice/history" element={<WritingHistory />} />
+            <Route path="writing-practice/history/:evaluationId" element={<WritingDetail />} />
           </Route>
 
           <Route path="/assessment" element={<PrivateRoute><Assessment /></PrivateRoute>} />

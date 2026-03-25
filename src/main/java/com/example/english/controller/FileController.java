@@ -71,8 +71,46 @@ public class FileController {
             Files.copy(file.getInputStream(), filePath);
 
             // Return relative URL for static resource handler
-            String fileUrl = "/api/files/audio/" + filename;
+            String fileUrl = "/api/files/" + filename;
             
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "url", fileUrl,
+                "filename", filename
+            ));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to upload file: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/upload")
+    @Operation(summary = "Upload a general file", description = "Upload any file and get its URL")
+    public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "File is empty"));
+        }
+
+        try {
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+
+            String filename = UUID.randomUUID().toString() + extension;
+            Path filePath = uploadPath.resolve(filename);
+
+            Files.copy(file.getInputStream(), filePath);
+
+            String fileUrl = "/api/files/" + filename;
+
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "url", fileUrl,
                 "filename", filename
